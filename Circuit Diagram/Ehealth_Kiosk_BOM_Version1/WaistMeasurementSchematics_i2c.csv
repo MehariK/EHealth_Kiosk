@@ -1,0 +1,14 @@
+"Part";"Value";"Device";"Package";"Description";"MF";"MPN";"OC_FARNELL";"OC_NEWARK";"PROD_ID";"SKU";
+"J2";"";"M03JST-PTH";"JST-3-PTH";"Header 3";"";"";"";"";"";"PRT-09915";
+"J6";"";"M02JST-PTH-2";"JST-2-PTH";"Standard 2-pin 0.1" header. Use with";"";"";"";"";"CONN-09863";"PRT-09914";
+"JP2";"";"M02PTH";"1X02";"Header 2";"";"";"";"";"";"";
+"JP3";"";"M02PTH";"1X02";"Header 2";"";"";"";"";"";"";
+"JP6";"";"M12PTH";"1X12";"Header 12";"";"";"";"";"";"";
+"JP7";"";"M12PTH";"1X12";"Header 12";"";"";"";"";"";"";
+"R4";"10K";"RESISTORKIT";"AXIAL-0.3-KIT";"Resistor";"";"";"";"";"";"";
+"R5";"10K";"RESISTORKIT";"AXIAL-0.3-KIT";"Resistor";"";"";"";"";"";"";
+"SV1";"";"FE12-1";"FE12";"FEMALE HEADER";"";"";"unknown";"unknown";"";"";
+"SV2";"";"FE12-1";"FE12";"FEMALE HEADER";"";"";"unknown";"unknown";"";"";
+"SW2";"ROTARTY_ENCODER";"ROTARTY_ENCODER";"ROTARY_ENC_PLAIN";"Simple no LED rotary encoder";"";"";"";"";"";"";
+"U$1";"ARDUINO_PRO_MINI";"ARDUINO_PRO_MINI";"ARDUINO_PRO_MINI";"";"";"";"";"";"";"";
+"U$3";"OSHW-LOGOS";"OSHW-LOGOS";"OSHW-LOGO-S";"Open Source Hardware Logo This logo indicates the piece of hardware it is found on incorporates a OSHW license and/or adheres to the definition of open source hardware found here: http://freedomdefined.org/OSHW";"";"";"";"";"";"";

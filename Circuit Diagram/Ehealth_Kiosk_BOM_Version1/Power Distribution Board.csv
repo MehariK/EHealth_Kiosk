@@ -1,0 +1,16 @@
+Part,Value,Device,Package,Description,MF,MPN,OC_FARNELL,OC_NEWARK
+C1,0.1u,"C2,5-3",C2.5-3,CAPACITOR,,,,
+C2,0.01,"C2,5-3",C2.5-3,CAPACITOR,,,,
+CN1,,JST_2PIN-THM,JST-PH-2-THM,JST 2-Pin Connectors of various flavors,,,,
+CN2,,JST_2PIN-THM,JST-PH-2-THM,JST 2-Pin Connectors of various flavors,,,,
+CN3,,JST_2PIN-THM,JST-PH-2-THM,JST 2-Pin Connectors of various flavors,,,,
+CN4,,JST_2PIN-THM,JST-PH-2-THM,JST 2-Pin Connectors of various flavors,,,,
+CN5,,JST_2PIN-THM,JST-PH-2-THM,JST 2-Pin Connectors of various flavors,,,,
+CN6,,JST_2PIN-THM,JST-PH-2-THM,JST 2-Pin Connectors of various flavors,,,,
+CN7,,JST_2PIN-THM,JST-PH-2-THM,JST 2-Pin Connectors of various flavors,,,,
+CN8,,JST_2PIN-THM,JST-PH-2-THM,JST 2-Pin Connectors of various flavors,,,,
+CN9,,JST_2PIN-THM,JST-PH-2-THM,JST 2-Pin Connectors of various flavors,,,,
+CN10,,JST_2PIN-THM,JST-PH-2-THM,JST 2-Pin Connectors of various flavors,,,,
+CN11,Raspberry Pi Power,JST_2PIN-THM,JST-PH-2-THM,JST 2-Pin Connectors of various flavors,,,,
+F1,2A,FUSE19560,19560,Fuse,,56000001009,1185363,98K6125
+HRD05003,HRD05003,HRD05003,HRD05003,,,,,

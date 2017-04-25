@@ -1,0 +1,13 @@
+Software intructions:
+
+The software is written using C#. You must have microsoft .net 2.0 framwork installed on your computer. This software is install free, you don't have to install it, just unzip  and run it. 
+
+Platform: Windows 2000, windows XP, windos Vista
+Framework: Microsoft .Net 2.0 and above
+
+If you have any question in using this software or sensor, you can post your question on 
+
+http://www.yerobot.com/forum/
+
+
+Thanks!

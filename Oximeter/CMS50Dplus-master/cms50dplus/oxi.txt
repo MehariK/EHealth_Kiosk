@@ -1,0 +1,1 @@
+"Time","PulseRate","SpO2","PulseWaveform","BarGraph","SignalStrength","Beep","FingerOut","Searching","DroppingSpO2","ProbeError"
