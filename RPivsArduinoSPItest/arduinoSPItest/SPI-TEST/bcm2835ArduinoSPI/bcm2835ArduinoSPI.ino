@@ -52,7 +52,7 @@ ISR (SPI_STC_vect)
   };
 
   
-  
+  Serial.println(sizeof(tx));
   // 0x57, 0x4F, 0x52, 0x4C, 0x44,0x0A 
   //SPDR = rx;
  SPI.transfer(tx, 12); 

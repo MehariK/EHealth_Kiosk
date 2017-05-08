@@ -1,87 +1,110 @@
 
-// Written by Nick Gammon
-// February 2011
-/**
- * Send arbitrary number of bits at whatever clock rate (tested at 500 KHZ and 500 HZ).
- * This script will capture the SPI bytes, when a '\n' is recieved it will then output
- * the captured byte stream via the serial.
- */
-
+ 
 #include <SPI.h>
 #define MISO 12
+#define CS 10
 
-char buf [100];
-volatile byte pos;
-volatile boolean process_it;
+//char buf [100];
+//volatile byte pos;
+//volatile boolean process_it;
+
+volatile uint8_t valueIN[12];
+uint8_t valueOUT[] = {
+      0x48, 0x65, 0x4C, 0x4C, 0x4F,
+      0x20, 
+       0x48, 0x49, 0x20, 0x52, 0x50, 0x69
+};
 
 void setup (void)
 {
   Serial.begin (115200);   // debugging
 
+  spi_init_slave();
+   
   // have to send on master in, *slave out*
-  pinMode(MISO, OUTPUT);
+  pinMode(MISO,OUTPUT);
+ // Set MISO output, all others input 
+ //DDR_SPI = (1<<DD_MISO);
+
+  
+  //the following line is inserted to troubleshoot the bus contention by multiple slave devices
+  
+  //pinMode(MISO, INPUT_PULLUP);
+ pinMode(CS, INPUT_PULLUP);
   
   // turn on SPI in slave mode
-  SPCR |= _BV(SPE);
+  //SPCR |= _BV(SPE);
+
+ //SPI.setClockDivider(SPI_CLOCK_DIV128);
+
+//I have uncommented the following implementation to troubleshoot multi slave caused bus issue
+ // SPI.beginTransaction(SPISettings(20000000, MSBFIRST, SPI_MODE0));
   
-  // get ready for an interrupt 
-  pos = 0;   // buffer empty
-  process_it = false;
-
- SPI.setClockDivider(SPI_CLOCK_DIV128);
-
-
-  //SPI.SPISettings(14000000, MSBFIRST, SPI_MODE0);
 
   // now turn on interrupts
-  SPI.attachInterrupt();
+ // SPI.attachInterrupt();
 
 }  // end of setup
 
 
-// SPI interrupt routine
-ISR (SPI_STC_vect)
-{
-byte c = SPDR;  // grab byte from SPI Data Register
-  //char *rx[] = {"\0x48", "\0x48"}; 
-
-  uint8_t rx[] = {
-      0x48, 0x45, 0x4C, 0x4C, 0x4F,
-      0x20, 
-       0x4D, 0x65, 0x68, 0x61, 0x72, 0x0A 
-  };
-  // 0x57, 0x4F, 0x52, 0x4C, 0x44,0x0A 
-  //SPDR = rx;
-  SPI.transfer(rx,12); 
-  for (char ret = 0; ret < 12; ret++) {
-    //if (!(ret % 6))
-    //  puts("");
-    //SPDR = rx[ret];
-   // printf("Character = %c\n", miso[ret] );
-  }
-  // add to buffer if room
-  if (pos < sizeof buf)
-    {
-    buf [pos++] = c;
-    Serial.println(pos);
-    // example: newline means time to process buffer
-    if (c == '\n')
-      process_it = true;
-      
-    }  // end of room available
-}  // end of interrupt routine SPI_STC_vect
 
 // main loop - wait for flag set in interrupt routine
 void loop (void)
 {
-  if (process_it)
-    {
-    buf [pos] = 0;  
-    Serial.println (buf);
-    pos = 0;
-    process_it = false;
-   
-    }  // end of flag set
-    //Serial.println(pos );
-    
+  //Serial.println("SPCR register content");
+  // Serial.println(SPCR,BIN);
+  if (digitalRead (CS) == LOW){
+    // SPI.beginTransaction(SPISettings(14000000, MSBFIRST, SPI_MODE0));
+  readWriteRaspiCommand(12, valueIN, valueOUT);
+
+   printRaspiCommand(12,valueIN);
+//   SPI.endTrasnsaction();
+  } 
 }  // end of loop
+
+
+// Initialize SPI Slave Device
+void spi_init_slave (void)
+{
+   // DDRB = (1<<6);     //MISO as OUTPUT
+    SPCR = (1<<SPE);   //Enable SPI
+}
+
+void readWriteRaspiCommand(int numBytes, uint8_t * valueIN, uint8_t * valueOUT){
+
+  //digitalWrite(CS, LOW);
+  //SPI.transfer(address);
+
+  for(int i=0; i<numBytes; i++){
+    //valueIN[i] = SPI.transfer(valueOUT[i]);
+    valueIN[i] = spi_tranceiver(valueOUT[i]);
+   // Serial.println(char(valueIN[i]));
+     }
+ // digitalWrite(CS, HIGH);
+
+}
+
+void printRaspiCommand(int lengthOfBytes, uint8_t * commandIN){
+
+   for(int i=0; i<lengthOfBytes; i++){
+    Serial.print(char(commandIN[i]));
+  }
+    Serial.print("\n");
+}
+
+//Function to send and receive data for both master and slave
+//unsigned char spi_tranceiver (unsigned char data)
+uint8_t spi_tranceiver (unsigned char data)
+{
+    // Load data into the buffer
+    SPDR = data;
+ 
+    //Wait until transmission complete
+    while(!(SPSR & (1<<SPIF) ));
+ 
+    // Return received data
+    return(SPDR);
+}
+
+
+

@@ -1,0 +1,3 @@
+#!/bin/bash
+sudo wpa_supplicant -iwlan0 -c/etc/wpa_supplicant/wpa_supplicant.conf -B
+#dhcpcd
