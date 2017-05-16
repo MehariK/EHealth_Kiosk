@@ -10,9 +10,9 @@
 
 volatile uint8_t valueIN[12];
 uint8_t valueOUT[] = {
-      0x48, 0x65, 0x4C, 0x4C, 0x4F,
+      0x37, 0x38, 0x39, 0x30, 0x2E,
       0x20, 
-       0x48, 0x49, 0x20, 0x52, 0x50, 0x69
+       0x31, 0x32, 0x33, 0x34, 0x35, 0x36
 };
 
 void setup (void)
@@ -57,7 +57,7 @@ void loop (void)
     // SPI.beginTransaction(SPISettings(14000000, MSBFIRST, SPI_MODE0));
   readWriteRaspiCommand(12, valueIN, valueOUT);
 
-   printRaspiCommand(12,valueIN);
+   //printRaspiCommand(12,valueIN);
 //   SPI.endTrasnsaction();
   } 
 }  // end of loop
