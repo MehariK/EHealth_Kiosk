@@ -23,7 +23,7 @@ int main(int argc, char **argv) {
 	//bcm2835_gpio_write(HEIGHT_CS,HIGH);
 
 	//uint8_t mosi[10] = { 0x60, 0x00 };
-	uint8_t mosi_requestReadHeight[] = { 0xAA};
+	uint8_t mosi_requestReadHeight[] = { 0x0A};
 	uint8_t miso_readJunkHeight[1];
 	//uint8_t moutsi[12] = { 0 };
 	uint8_t miso_readHeightData[1];
@@ -102,7 +102,7 @@ int main(int argc, char **argv) {
 		//if (!(ret % 6))
 		//	puts("");
 		//printf("%.2X ", rx[ret]);
-		printf("Character = %c\n", miso_readHeightData[0] );
+		printf("Character = %x\n", miso_readHeightData[0] );
 	//}
 
 
