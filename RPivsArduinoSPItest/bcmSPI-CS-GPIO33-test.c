@@ -13,7 +13,7 @@ int main(int argc, char **argv) {
 	bcm2835_spi_begin();
 	bcm2835_spi_setBitOrder(BCM2835_SPI_BIT_ORDER_MSBFIRST);      // The default
 	bcm2835_spi_setDataMode(BCM2835_SPI_MODE0);                   // The default
-	bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_1024);    // ~ o KHz
+	bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_128);    // ~ o KHz
 	bcm2835_spi_chipSelect(BCM2835_SPI_CS_NONE);                      // The default
    //   bcm2835_spi_setChipSelectPolarity(nibp_CS, LOW);      // the default
 
@@ -93,7 +93,7 @@ int main(int argc, char **argv) {
 	//the CS line will be de-asserted no earlier than 1 core clock cycle 
 	//after the trailing edge of teh final clock pulse
 
-	bcm2835_delayMicroseconds(.244);
+	bcm2835_delayMicroseconds(.777);
 
 	bcm2835_gpio_write(HEIGHT_CS,HIGH);
 
@@ -102,7 +102,7 @@ int main(int argc, char **argv) {
 		//if (!(ret % 6))
 		//	puts("");
 		//printf("%.2X ", rx[ret]);
-		printf("Character = %x\n", miso_readHeightData[0] );
+		printf("Character = %d\n", miso_readHeightData[0] );
 	//}
 
 
