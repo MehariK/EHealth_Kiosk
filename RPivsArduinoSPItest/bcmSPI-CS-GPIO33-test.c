@@ -13,7 +13,7 @@ int main(int argc, char **argv) {
 	bcm2835_spi_begin();
 	bcm2835_spi_setBitOrder(BCM2835_SPI_BIT_ORDER_MSBFIRST);      // The default
 	bcm2835_spi_setDataMode(BCM2835_SPI_MODE0);                   // The default
-	bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_64);    // ~ o KHz
+	bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_1024);    // ~ o KHz
 	bcm2835_spi_chipSelect(BCM2835_SPI_CS_NONE);                      // The default
    //   bcm2835_spi_setChipSelectPolarity(nibp_CS, LOW);      // the default
 
@@ -23,17 +23,18 @@ int main(int argc, char **argv) {
 	//bcm2835_gpio_write(HEIGHT_CS,HIGH);
 
 	//uint8_t mosi[10] = { 0x60, 0x00 };
-	uint8_t mosi_requestReadHeight[] = { 0xAA
-	};
-	uint8_t mosi_readJunkHeight[1];
+	uint8_t mosi_requestReadHeight[] = { 0xAA};
+	uint8_t miso_readJunkHeight[1];
 	//uint8_t moutsi[12] = { 0 };
-	uint8_t miso_readHeightData[] = { 0 };
+	uint8_t miso_readHeightData[1];
+	uint8_t mosi_sendHeightDataCall[] = { 0x14 };
 	
 
 	// ///////// This is the first part of the request  to the Height Sensor/////////////
 	//										   //
 	////////////////////////////////////////////////////////////////////////////////////
 
+	
 	
 	//custom chip select set to low here
 
@@ -42,14 +43,14 @@ int main(int argc, char **argv) {
 	// The  CS GPIO will be asserted at least 3 core clock cycles 
 	// before the msb of the first byte of the transefer
 
-	//bcm2835_delayMicroseconds(.777);
+	bcm2835_delayMicroseconds(.777);
 
 	//create some delay to help match the clock and the cs
 	//bcm2835_delay(10);
 
 	//for (char ret = 0; ret < 12; ret++) {
 		//transfer here
-		miso_readJunkHeight[0] = bcm2835_spi_transfer(mosi_requestHeight[0]);
+		miso_readJunkHeight[0] = bcm2835_spi_transfer(mosi_requestReadHeight[0]);
 	//}
 
 
@@ -58,7 +59,7 @@ int main(int argc, char **argv) {
 	//the CS line will be de-asserted no earlier than 1 core clock cycle 
 	//after the trailing edge of teh final clock pulse
 
-	//bcm2835_delayMicroseconds(.244);
+	bcm2835_delayMicroseconds(.244);
 
 	bcm2835_gpio_write(HEIGHT_CS,HIGH);
 
@@ -67,6 +68,7 @@ int main(int argc, char **argv) {
 	//										  //
 	////////////////////////////////////////////////////////////////////////////////////
 
+	bcm2835_delayMicroseconds(.777);
 	
 	//custom chip select set to low here
 
@@ -75,14 +77,14 @@ int main(int argc, char **argv) {
 	// The  CS GPIO will be asserted at least 3 core clock cycles 
 	// before the msb of the first byte of the transefer
 
-	//bcm2835_delayMicroseconds(.777);
+	bcm2835_delayMicroseconds(.777);
 
 	//create some delay to help match the clock and the cs
 	//bcm2835_delay(10);
 
 	//for (char ret = 0; ret < 12; ret++) {
 		//transfer here
-		miso_readJunkHeight[0] = bcm2835_spi_transfer(mosi_requestHeight[0]);
+		miso_readHeightData[0] = bcm2835_spi_transfer(mosi_sendHeightDataCall[0]);
 	//}
 
 
@@ -91,7 +93,7 @@ int main(int argc, char **argv) {
 	//the CS line will be de-asserted no earlier than 1 core clock cycle 
 	//after the trailing edge of teh final clock pulse
 
-	//bcm2835_delayMicroseconds(.244);
+	bcm2835_delayMicroseconds(.244);
 
 	bcm2835_gpio_write(HEIGHT_CS,HIGH);
 
