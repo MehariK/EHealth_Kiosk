@@ -13,7 +13,7 @@ int main(int argc, char **argv) {
 	bcm2835_spi_begin();
 	bcm2835_spi_setBitOrder(BCM2835_SPI_BIT_ORDER_MSBFIRST);      // The default
 	bcm2835_spi_setDataMode(BCM2835_SPI_MODE0);                   // The default
-	bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_4096);    // ~ o KHz
+	bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_64);    // ~ o KHz
    	bcm2835_spi_chipSelect(BCM2835_SPI_CS_NONE);                      // The default
    //   bcm2835_spi_setChipSelectPolarity(nibp_CS, LOW);      // the default
 
@@ -63,22 +63,22 @@ int main(int argc, char **argv) {
 	bcm2835_gpio_write(HEIGHT_CS,HIGH);
 
 	
-	bcm2835_spi_end();
+//	bcm2835_spi_end();
 	
 
 	/////////// This is the second part of the call to the  Sensor for real data////////
 	//										  //
 	////////////////////////////////////////////////////////////////////////////////////
 
-	//bcm2835_delayMicroseconds(.777);
+	bcm2835_delayMicroseconds(200);
 
-	for(int i=0; i< 1000; i++){}
+//	for(int i=0; i< 1000; i++){}
 
 
 	//second part continoues after  the delay as put in the above line
 
 	//custom chip select set to low here
-
+  /*
 	
 	bcm2835_spi_begin();
 	bcm2835_spi_setBitOrder(BCM2835_SPI_BIT_ORDER_MSBFIRST);      // The default
@@ -86,7 +86,7 @@ int main(int argc, char **argv) {
 	bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_4096);    // ~ o KHz
    	bcm2835_spi_chipSelect(BCM2835_SPI_CS_NONE);                      // The default
    //   bcm2835_spi_setChipSelectPolarity(nibp_CS, LOW);      // the default
-
+*/
 
 
 	
