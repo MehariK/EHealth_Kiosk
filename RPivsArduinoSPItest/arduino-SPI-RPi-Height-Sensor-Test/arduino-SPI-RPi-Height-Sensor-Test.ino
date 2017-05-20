@@ -63,7 +63,7 @@ void setup (void)
   // turn on SPI in slave mode
   //SPCR |= _BV(SPE);
 
- //SPI.setClockDivider(SPI_CLOCK_DIV128);
+ SPI.setClockDivider(SPI_CLOCK_DIV4);
 
 //I have uncommented the following implementation to troubleshoot multi slave caused bus issue
  // SPI.beginTransaction(SPISettings(20000000, MSBFIRST, SPI_MODE0));
@@ -81,7 +81,8 @@ void loop (void)
 {
   //Serial.println("SPCR register content");
   // Serial.println(SPCR,BIN);
-    if (digitalRead (CS) == LOW){
+  valueIN[0] = spi_tranceiver_junk_send();
+    //if (digitalRead(CS)==LOW){
   //optimized code using register values to read CS pin status
                
               //  if ((PINB & _BV(PB2)) == B00000100){
@@ -104,21 +105,23 @@ void loop (void)
 
                       //request for measuring height by RPi command interpreted by 
                       //addition of consecutive values in a buffer to be used as a command
-                      Serial.println(SPDR);
+                      Serial.print("valueIN[0]");
+                      Serial.println(valueIN[0]);
                       height = readHeightSensor();
                       //SPDR = height;
-                      if(SPDR==0x0A){
+                      if(valueIN[0]==0x0A){
                          SPDR = height;
-                      //readRequestRaspiCommand(rpiThx, junkValueOUT);
+                         //*valueOUT = height;
+                         // spi_tranceiver(valueOUT);
                       //SPDR = readHeightSensor();
                       // SPDR = readHeightSensor();
-                       // spi_tranceiver(junkValueOUT);
+                       // 
                         Serial.println("10");
                        // distance = readHeightSensor();
                       }
                       //request by RPi to transmit the data read from the Height Sensor
-                      else if(SPDR==0x14) {
-                       SPDR = height;
+                      else if(valueIN[0]==0x14){
+                           //SPDR = height;
                           // *junkValueOUT = 0xFA;
                            //sendSensorReadingToRaspiCommand(valueOUT);
                           // spi_tranceiver(junkValueOUT);
@@ -128,6 +131,7 @@ void loop (void)
                       }
                       *valueIN = 0xFF;
                      // int x = readHeightSensor();
+                      Serial.print("height");
                       Serial.println(height);
 
       //measured height function ends here
@@ -135,8 +139,8 @@ void loop (void)
                             
                      //   }
             //  } //if ends here
-    }  //if        
-    delayMicroseconds(200);
+   // }  //if        
+    delayMicroseconds(1000);
 }  // end of loop
 
 // Initialize SPI Slave Device
