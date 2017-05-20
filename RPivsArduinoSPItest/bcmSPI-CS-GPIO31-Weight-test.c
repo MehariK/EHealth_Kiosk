@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 // Chip select on GPIO pin  GPIO3 
-#define HEIGHT_CS  RPI_V2_GPIO_P1_33
+#define HEIGHT_CS  RPI_V2_GPIO_P1_31
 
 int main(int argc, char **argv) {
 	if (!bcm2835_init()) {
