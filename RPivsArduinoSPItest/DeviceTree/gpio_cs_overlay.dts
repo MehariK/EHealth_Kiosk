@@ -59,7 +59,7 @@
       target = <&gpio>;
       __overlay__ {
          spi0_cs_pins: spi0_cs_pins {
-            brcm,pins = <4 5 6 13 26>;
+            brcm,pins = <4 5 6 13 26>; 
             brcm,function = <1 1 1 1 1>; /* out */
 		    brcm,pull = <0 0 0 0 0>;     /* 2:up 1:down 0:none */
 		    brcm,state = <1 1 1 1 1>;    /* set output to high */

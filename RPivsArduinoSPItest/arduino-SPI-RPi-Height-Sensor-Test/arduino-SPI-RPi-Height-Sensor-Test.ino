@@ -38,6 +38,10 @@ void setup (void)
 {
   Serial.begin (115200);   // debugging
 
+
+  //Set the clock to communicate with RPi at 4MHz
+ SPI.setClockDivider(SPI_CLOCK_DIV4);
+
   spi_init_slave();
 
    pinMode(TRIGPIN, OUTPUT); // Sets the trigPin as an Output
@@ -63,14 +67,12 @@ void setup (void)
   // turn on SPI in slave mode
   //SPCR |= _BV(SPE);
 
- SPI.setClockDivider(SPI_CLOCK_DIV4);
-
 //I have uncommented the following implementation to troubleshoot multi slave caused bus issue
  // SPI.beginTransaction(SPISettings(20000000, MSBFIRST, SPI_MODE0));
   
 
   // now turn on interrupts
- // SPI.attachInterrupt();
+  // SPI.attachInterrupt();
 
 }  // end of setup
 
