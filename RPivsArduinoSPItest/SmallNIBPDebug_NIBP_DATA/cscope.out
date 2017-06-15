@@ -1,0 +1,661 @@
+cscope 15 $HOME/Mehari/KIC/Theme Study B/Prototype/RPivsArduinoSPItest/SmallNIBPDebug_NIBP_DATA               0000003842
+	@SmallNIBPDebug_NIBP_DATA.ino
+
+1 
+	~<Soáw¬eS”Ÿl.h
+>
+
+3 
+by‹
+ 
+	gcmd_»que¡_Ý’_comm_pÜt
+[]= {
+
+7 
+	gACK_·ck‘_Ëngth
+ = 6;
+
+8 
+by‹
+ 
+	gACK_·ck‘
+[]= {
+
+12 
+	gNAK_·ck‘_Ëngth
+ = 6;
+
+13 
+by‹
+ 
+	gNAK_·ck‘
+[]= {
+
+18 
+Soáw¬eS”Ÿl
+ 
+S”Ÿl2
+(8,9);
+
+20 *
+decodeMes§ge
+Ð*
+mes
+, 
+n
+ );
+
+23 
+	$issue_commªd_to_BPM
+Ð
+com1
+, 
+com2
+ ){
+
+24 
+ack_»ûived
+ = 0;
+
+25 
+cmd_äame
+[8]= { 0x02, 0x43, 0x50, 0x43, 0x00, 0x00, 0x00 };
+
+26 
+sum
+=0;
+
+27 
+cmd_äame
+[4] = 
+com1
+;
+
+28 
+cmd_äame
+[5] = 
+com2
+;
+
+29  
+i
+=1; i<6; i++ ) {
+
+30 
+sum
+ +ð
+cmd_äame
+[
+i
+];
+
+32 
+cmd_äame
+[6] = 
+sum
+ & 0xff;
+
+34  
+ŒŸl
+=0;rial<3;rial++ ) {
+
+35 
+S”Ÿl
+.
+	`wr™e
+Ð
+cmd_äame
+, 7 );
+
+38 
+d©aR—dšg
+[100] = {};
+
+39  
+S”Ÿl
+.
+	`avažabË
+() == 0 );
+
+40 
+	`d–ay
+( 10 );
+
+41 
+num_by‹s
+ = 
+S”Ÿl
+.
+	`avažabË
+();
+
+42 
+S”Ÿl
+.
+	`»adBy‹s
+(
+d©aR—dšg
+,
+num_by‹s
+);
+
+45 ifÐ
+d©aR—dšg
+[5] == 0x06 ) {
+
+46 
+ack_»ûived
+ = 1;
+
+48 } ifÐ
+d©aR—dšg
+[5] != 0x15 ) {
+
+52 Ð
+ack_»ûived
+ );
+
+53 
+	}
+}
+
+56 
+	$issue_commªd_ªd_check_ack
+Ð
+com1
+, 
+com2
+, *
+sucûss
+, *
+çžu»
+ ) {
+
+57 
+code
+ = 
+	`issue_commªd_to_BPM
+Ð
+com1
+, 
+com2
+ );
+
+58 ifÐ
+code
+ !ð0 ) { 
+S”Ÿl2
+.
+	`´šŽn
+Ð
+sucûss
+ );
+
+59 } { 
+S”Ÿl2
+.
+	`´šŽn
+Ð
+çžu»
+ );}
+
+60 
+	}
+}
+
+64 
+boÞ—n
+
+
+65 
+	$»ûive_commªd_äom_BPM
+Ð*
+d©aR—dšg
+, 
+buf_size
+ ) {
+
+66 
+boÞ—n
+ 
+sucûss
+=
+çl£
+;
+
+67 
+d©a_Ëngth
+;
+
+68 
+·ck‘_Ëngth
+;
+
+69  
+ŒŸl
+=0;rial<3;rial++ ) {
+
+70 
+num_by‹s
+=0;
+
+71 
+·ck‘_Ëngth
+ = 100000;
+
+74  
+S”Ÿl
+.
+	`avažabË
+() == 0 );
+
+75 
+d©aR—dšg
+[
+num_by‹s
+++] = 
+S”Ÿl
+.
+	`»ad
+();
+
+76 ifÐ
+num_by‹s
+ >ð
+buf_size
+ ) {
+
+77 
+S”Ÿl2
+.
+	`´šŽn
+( "buffer overflow!" );
+
+79 ifÐ
+num_by‹s
+ >= 8 ) {
+
+80 
+d©a_Ëngth
+ = 0;
+
+81  
+i
+=0; i<4; i++ ) {
+
+82 
+d©a_Ëngth
+ *= 16;
+
+83 
+dig™
+ = 
+d©aR—dšg
+[4+
+i
+];
+
+84 ifÐ
+dig™
+ >ð'A' && dig™ <ð'F' ) 
+d©a_Ëngth
+ += digit - 'A' + 10;
+
+85 ifÐ
+dig™
+ >ð'a' && dig™ <ð'f' ) 
+d©a_Ëngth
+ += digit - 'a' + 10;
+
+86 
+d©a_Ëngth
+ +ð
+dig™
+ - '0';
+
+89 
+·ck‘_Ëngth
+ = 
+d©a_Ëngth
+ + 10;
+
+96 }  
+num_by‹s
+ < 
+·ck‘_Ëngth
+ );
+
+97 
+S”Ÿl2
+.
+	`´šŽn
+Ð
+·ck‘_Ëngth
+ );
+
+101 
+sum
+=0;
+
+102  
+i
+=1; i<
+·ck‘_Ëngth
+-1; i++ ) {
+
+103 
+sum
+ +ð
+d©aR—dšg
+[
+i
+];
+
+105 
+sum
+ &= 0xff;
+
+106 ifÐ
+sum
+ =ð
+d©aR—dšg
+[
+num_by‹s
+-1] ) {
+
+107 
+S”Ÿl
+.
+	`wr™e
+Ð
+ACK_·ck‘
+, 
+ACK_·ck‘_Ëngth
+ );
+
+108 
+S”Ÿl2
+.
+	`´šŽn
+( "ACK sent" );
+
+110 
+sucûss
+ = 
+Œue
+;
+
+114 
+S”Ÿl
+.
+	`wr™e
+Ð
+NAK_·ck‘
+, 
+NAK_·ck‘_Ëngth
+ );
+
+115 
+S”Ÿl2
+.
+	`´šŽn
+( "NAK sent" );
+
+121 *
+out
+ = 
+	`decodeMes§ge
+Ð
+d©aR—dšg
++9, 
+d©a_Ëngth
+ );
+
+122 
+S”Ÿl2
+.
+	`´šŽn
+(
+out
+);
+
+123 Ð
+sucûss
+ );
+
+124 
+	}
+}
+
+128 
+	$£tup
+() {
+
+129 
+S”Ÿl2
+.
+	`begš
+(57600);
+
+132 
+S”Ÿl
+.
+	`begš
+(9600,
+SERIAL_8N2
+);
+
+134 
+S”Ÿl
+.
+	`wr™e
+(0);
+
+137 
+	`d–ay
+(100);
+
+141 
+	`issue_commªd_ªd_check_ack
+( 0x30, 0x35, "Port opened!", "Error in open…ort!" );
+
+143 
+	`d–ay
+( 1000 );
+
+146 
+	#BUF_SIZE
+ 500
+
+	)
+
+148 
+d©aR—dšg
+[
+BUF_SIZE
+];
+
+152 
+	`issue_commªd_ªd_check_ack
+( 0x31, 0x33,
+
+156 
+boÞ—n
+ 
+æag
+=
+	`»ûive_commªd_äom_BPM
+Ð
+d©aR—dšg
+, 
+BUF_SIZE
+ );
+
+157 
+S”Ÿl2
+.
+	`´šŽn
+Ð
+æag
+ );
+
+161 
+	`issue_commªd_ªd_check_ack
+( 0x34, 0x30, "Measurement started!",
+
+164  
+i
+=0; i<35; i++ ) {
+
+165 
+	`d–ay
+( 2000 );
+
+166 ifÐ
+i
+%10 =ð0 ) 
+S”Ÿl2
+.
+	`´št
+( "+" );
+
+167 
+S”Ÿl2
+.
+	`´št
+( "-" );
+
+169 
+S”Ÿl2
+.
+	`´šŽn
+( "" );
+
+172 
+S”Ÿl2
+.
+	`´šŽn
+( "Now issue„ead measured data" );
+
+173 
+	`issue_commªd_ªd_check_ack
+( 0x31, 0x30,
+
+176 
+boÞ—n
+ 
+æag
+=
+	`»ûive_commªd_äom_BPM
+Ð
+d©aR—dšg
+, 
+BUF_SIZE
+ );
+
+177 
+S”Ÿl2
+.
+	`´šŽn
+Ð
+æag
+ );
+
+178 
+	}
+}
+
+182 
+	$bšToHex
+Ð
+š
+ ) {
+
+183 ifÐ
+š
+ > 9 ) {
+
+184 Ð
+š
+-10+'a');
+
+186 Ð
+š
++'0');
+
+188 
+	}
+}
+
+191 
+	$decodeMes§ge
+Ð*
+mes
+, 
+n
+ ) {
+
+192 
+out
+[100];
+
+193 
+i
+;
+
+194  
+i
+=0; i<
+n
+; i++ ) {
+
+195 
+out
+[
+i
+*2] = 
+	`bšToHex
+Ð(
+mes
+[i]>>4)&0xf );
+
+196 
+out
+[
+i
+*2+1] = 
+	`bšToHex
+Ð
+mes
+[i]&0xf );
+
+198 
+out
+[2*
+i
+] = '\0';
+
+199 Ð
+out
+ );
+
+200 
+	}
+}
+
+203 
+	$loÝ
+() {
+
+207 
+	}
+}
+
+	@
+1
+.
+1
+/usr/include
+1
+29
+SmallNIBPDebug_NIBP_DATA.ino

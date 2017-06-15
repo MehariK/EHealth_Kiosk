@@ -1,18 +1,28 @@
 #include <SoftwareSerial.h>
 
+#define BUF_SIZE 500
+
 byte cmd_request_open_comm_port[]= {
   0x02, 0x43, 0x50, 0x43, 0x30, 0x35, 0x3B
 };
 
 int ACK_packet_length = 6;
+
 byte ACK_packet[]= {
   0x01, 0x50, 0x43, 0x37, 0x30, 0x06
 };
 
 int NAK_packet_length = 6;
+
 byte NAK_packet[]= {
   0x01, 0x50, 0x43, 0x37, 0x30, 0x15
 };
+
+byte XOFF_packet[]= {
+  0x01, 0x50, 0x43, 0x37, 0x30, 0x13
+};
+
+
 
 
 SoftwareSerial Serial2(8,9); //RX, TXs
@@ -42,15 +52,15 @@ int issue_command_to_BPM( int com1, int com2 ){
     Serial.readBytes(dataReading,num_bytes); // read acknowledge packet
     
     // check acknowlege packet
-    if( dataReading[5] == 0x06 /*ACK*/ ) {
-      ack_received = 1;
-      break;
-    } else if( dataReading[5] != 0x15 /*NAK*/) {
-      // error happened!      
-    }
+      if( dataReading[5] == 0x06 /*ACK*/ ) {
+        ack_received = 1;
+        break;
+      } else if( dataReading[5] != 0x15 /*NAK*/) {
+        // error happened!      
+      }
   }
-  return( ack_received );
-}
+  return( ack_received ); //on successfull transmission of command returns 1 otherwise returns 0
+} //issue command to BPM end here
 
 
 void issue_command_and_check_ack( int com1, int com2, char *success, char *failure ) {
@@ -66,6 +76,7 @@ receive_command_from_BPM( unsigned char *dataReading, long buf_size ) {
     boolean success=false;
     int data_length;
     long packet_length;
+    //three attempts considering three possible times to receive NAC
     for( int trial=0; trial<3; trial++ ) {  
       int num_bytes=0;
       packet_length = 100000;
@@ -143,7 +154,7 @@ void setup() {
   delay( 1000 );
 
 
-#define BUF_SIZE 500
+
   //listen message from BPM and print to Serial2
    unsigned char dataReading[BUF_SIZE];
   
@@ -160,19 +171,28 @@ void setup() {
   // start blood pressure measurement
   issue_command_and_check_ack( 0x34, 0x30, /* start measurement */ "Measurement started!",
              "Error in starting measurement!" );
+  //XOFF
+  delay(100);
+  Serial.write(0x13); //this is XOFF no data will come from BP until next action
 
-  for( int i=0; i<35; i++ ) {
-    delay( 2000 );
+  // Temporary fix to stop the BP from sending back data until Arduino is ok to receive
+ 
+  for( int i=0; i<34; i++ ) {
+    delay( 1000 );
     if( i%10 == 0 ) Serial2.print( "+" );
     else Serial2.print( "-" );
   }
   Serial2.println( "" );
-  
-  // read measured data
-  Serial2.println( "Now issue read measured data" );
-  issue_command_and_check_ack( 0x31, 0x30, /* inquire BP & pulse data */
-             "issue data request", "error in issueing data request" );
 
+ // Temporary fix to stop the BP from sending back data until Arduino is ok to receive
+ //
+ //Serial2.write(0x11); //this is XON  data will come from BP
+  
+  // read measured data debugging here on June 15 afternoon
+  Serial2.println( "Now issue read measured data" );
+  /*issue_command_and_check_ack( 0x31, 0x30, // inquire BP & pulse data 
+             "issue data request", "error in issueing data request" ); */
+  
   boolean flag=receive_command_from_BPM( dataReading, BUF_SIZE );
   Serial2.println( flag );
 }
@@ -200,11 +220,26 @@ decodeMessage( unsigned char *mes, int n ) {
 }
 
 
+int
+HexToASCII(int hex_Value, unsigned char *dataReading){
+int new_ASCII_Value;
+for( int i=0; i<4; i++ ) {
+            hex_Value *= 16;
+            int digit = dataReading[4+i];
+            if( digit >= 'A' && digit <= 'F' ) hex_Value += digit - 'A' + 10;
+            else if( digit >= 'a' && digit <= 'f' ) hex_Value += digit - 'a' + 10;
+            else hex_Value += digit - '0';
+            new_ASCII_Value = hex_Value;
+        return new_ASCII_Value;
+}
+}
+
 void loop() {
  // put your main code here, to run repeatedly:
 
     while( 1  );
 }
+
 
 
 
