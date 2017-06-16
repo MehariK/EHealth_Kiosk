@@ -1,36 +1,29 @@
 #include <SoftwareSerial.h>
 
-#define BUF_SIZE 500
-
 byte cmd_request_open_comm_port[]= {
   0x02, 0x43, 0x50, 0x43, 0x30, 0x35, 0x3B
 };
 
 int ACK_packet_length = 6;
-
 byte ACK_packet[]= {
   0x01, 0x50, 0x43, 0x37, 0x30, 0x06
 };
 
 int NAK_packet_length = 6;
-
 byte NAK_packet[]= {
   0x01, 0x50, 0x43, 0x37, 0x30, 0x15
 };
-
-byte XOFF_packet[]= {
-  0x01, 0x50, 0x43, 0x37, 0x30, 0x13
-};
-
-
 
 
 SoftwareSerial Serial2(8,9); //RX, TXs
 
 char *decodeMessage( unsigned char *mes, int n );
 
+char binToHex( char in );
+
 
 int issue_command_to_BPM( int com1, int com2 ){
+  Serial2.println( "check0" );
   int ack_received = 0;
   static char cmd_frame[8]= { 0x02, 0x43, 0x50, 0x43, 0x00, 0x00, 0x00 };
     int sum=0;
@@ -46,21 +39,23 @@ int issue_command_to_BPM( int com1, int com2 ){
 
     // wait for acknowledge from BPM
     char dataReading[100] =  {};
+Serial2.println( "check1" );
     while( Serial.available() == 0 );
+Serial2.println( "check2" );
     delay( 10 );
     int num_bytes = Serial.available();
     Serial.readBytes(dataReading,num_bytes); // read acknowledge packet
     
     // check acknowlege packet
-      if( dataReading[5] == 0x06 /*ACK*/ ) {
-        ack_received = 1;
-        break;
-      } else if( dataReading[5] != 0x15 /*NAK*/) {
-        // error happened!      
-      }
+    if( dataReading[5] == 0x06 /*ACK*/ ) {
+      ack_received = 1;
+      break;
+    } else if( dataReading[5] != 0x15 /*NAK*/) {
+      // error happened!      
+    }
   }
-  return( ack_received ); //on successfull transmission of command returns 1 otherwise returns 0
-} //issue command to BPM end here
+  return( ack_received );
+}
 
 
 void issue_command_and_check_ack( int com1, int com2, char *success, char *failure ) {
@@ -76,7 +71,6 @@ receive_command_from_BPM( unsigned char *dataReading, long buf_size ) {
     boolean success=false;
     int data_length;
     long packet_length;
-    //three attempts considering three possible times to receive NAC
     for( int trial=0; trial<3; trial++ ) {  
       int num_bytes=0;
       packet_length = 100000;
@@ -134,6 +128,64 @@ receive_command_from_BPM( unsigned char *dataReading, long buf_size ) {
     return( success );
 }
 
+char *
+decodeMessage( unsigned char *mes, int n ) {
+  static char out[100];
+  int i;
+  for( i=0; i<n; i++ ) {
+     out[i*2] = binToHex( (mes[i]>>4)&0xf );
+     out[i*2+1] = binToHex( mes[i]&0xf );
+  }
+  out[2*i] = '\0';
+  return( out );
+}
+
+int
+decodeTwoBytesHEX( unsigned char *p ) {
+  int val=0;
+  for( int i=0; i<2; i++, p++ ) {
+    val *= 16;
+    if( *p >= 'A' && *p <= 'F' ) val += *p - 'A';
+    else if( *p >= 'a' && *p <= 'f' ) val += *p - 'a';
+    else val += *p - '0';
+  }
+  return( val );
+}
+
+void
+read_message_after_measurement() {
+  while( Serial.available()==0 );
+  delay( 20 );
+  int num_bytes=Serial.available();
+  char buf[100];
+  Serial.readBytes( buf, num_bytes );
+  buf[num_bytes] = '\0';
+  Serial2.println( buf );
+    
+  int val[5];
+  for( int i=0; i<5; i++ ) {
+    val[i] = decodeTwoBytesHEX( buf+i*2 );
+  }
+  int SYS = val[1]+val[2];
+  int DIA = val[2];
+  int PUL = val[3];
+  sprintf( buf, "%d %d %d %d %d", val[0], val[1], val[2], val[3], val[4] );
+  Serial2.println( buf );
+  sprintf( buf, "SYS=%d DIA=%d PUL=%d", SYS, DIA, PUL );
+  Serial2.println( buf );
+}
+
+#if 0
+void read_device_id() {
+  // read device id
+  issue_command_and_check_ack( 0x31, 0x33, /* inquire device ID */
+             "issue inquire device ID", "error in issueing inquire device ID" );
+
+
+   boolean flag=receive_command_from_BPM( dataReading, BUF_SIZE );
+   Serial2.println( flag );
+}
+#endif
 
 
 void setup() {
@@ -149,52 +201,38 @@ void setup() {
  // Serial.write(0x5);
 
   // request open command
-  issue_command_and_check_ack( 0x30, 0x35, /* open connection */ "Port opened!", "Error in open port!" );
+  issue_command_and_check_ack( 0x30, 0x35, /* open connect1ion */ "Port opened!", "Error in open port!" );
   
   delay( 1000 );
 
 
-
+#define BUF_SIZE 500
   //listen message from BPM and print to Serial2
    unsigned char dataReading[BUF_SIZE];
   
-#if 0
-  // read device id
-  issue_command_and_check_ack( 0x31, 0x33, /* inquire device ID */
-             "issue inquire device ID", "error in issueing inquire device ID" );
-
-
-   boolean flag=receive_command_from_BPM( dataReading, BUF_SIZE );
-   Serial2.println( flag );
-#endif
 
   // start blood pressure measurement
   issue_command_and_check_ack( 0x34, 0x30, /* start measurement */ "Measurement started!",
              "Error in starting measurement!" );
-  //XOFF
-  delay(100);
-  Serial.write(0x13); //this is XOFF no data will come from BP until next action
 
-  // Temporary fix to stop the BP from sending back data until Arduino is ok to receive
- 
-  for( int i=0; i<34; i++ ) {
-    delay( 1000 );
+  read_message_after_measurement();
+
+  for( int i=0; i<20; i++ ) {
+    delay( 2000 );
     if( i%10 == 0 ) Serial2.print( "+" );
     else Serial2.print( "-" );
   }
   Serial2.println( "" );
-
- // Temporary fix to stop the BP from sending back data until Arduino is ok to receive
- //
- //Serial2.write(0x11); //this is XON  data will come from BP
   
-  // read measured data debugging here on June 15 afternoon
+  // read measured data
   Serial2.println( "Now issue read measured data" );
-  /*issue_command_and_check_ack( 0x31, 0x30, // inquire BP & pulse data 
-             "issue data request", "error in issueing data request" ); */
-  
-  boolean flag=receive_command_from_BPM( dataReading, BUF_SIZE );
+  issue_command_and_check_ack( 0x31, 0x30, /* inquire BP & pulse data */
+             "issue data request", "error in issueing data request" );
+
+#if 0
+  flag=receive_command_from_BPM( dataReading, BUF_SIZE );
   Serial2.println( flag );
+#endif
 }
 
 
@@ -207,39 +245,21 @@ binToHex( char in ) {
   }
 }
 
-char *
-decodeMessage( unsigned char *mes, int n ) {
-  static char out[100];
-  int i;
-  for( i=0; i<n; i++ ) {
-     out[i*2] = binToHex( (mes[i]>>4)&0xf );
-     out[i*2+1] = binToHex( mes[i]&0xf );
-  }
-  out[2*i] = '\0';
-  return( out );
-}
 
 
-int
-HexToASCII(int hex_Value, unsigned char *dataReading){
-int new_ASCII_Value;
-for( int i=0; i<4; i++ ) {
-            hex_Value *= 16;
-            int digit = dataReading[4+i];
-            if( digit >= 'A' && digit <= 'F' ) hex_Value += digit - 'A' + 10;
-            else if( digit >= 'a' && digit <= 'f' ) hex_Value += digit - 'a' + 10;
-            else hex_Value += digit - '0';
-            new_ASCII_Value = hex_Value;
-        return new_ASCII_Value;
-}
-}
+
+
 
 void loop() {
  // put your main code here, to run repeatedly:
-
-    while( 1  );
+  if( Serial.available()) {
+    delay( 20 );
+    int num_bytes=Serial.available();
+    char buf[100];
+    Serial.readBytes( buf, num_bytes );
+    Serial2.println( decodeMessage( buf, num_bytes ) );
+  }
 }
-
 
 
 
