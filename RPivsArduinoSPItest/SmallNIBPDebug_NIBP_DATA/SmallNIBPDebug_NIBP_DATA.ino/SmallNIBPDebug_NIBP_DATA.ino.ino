@@ -198,9 +198,10 @@ receive_BP_measurement_data_from_BPM( unsigned char *dataReading, long buf_size/
     }
        
     // print data field
-   char *out = decodeMessage( dataReading+9, data_length );
+   char *out = dataReading+9;
+   
 
-   Serial2.println(out);
+   //Serial2.println(out);
 
      //read_BP_data_after_each_measurement(out, data_length);
 
@@ -211,7 +212,7 @@ receive_BP_measurement_data_from_BPM( unsigned char *dataReading, long buf_size/
             Serial2.print("Number of bytes: ");
             Serial2.println(num_bytes);
            // out[num_bytes] = '\0';
-            Serial2.println( out );
+            //Serial2.println( out );
               
             int val[11];
             for( int i=0; i<11; i++ ) {
@@ -220,14 +221,14 @@ receive_BP_measurement_data_from_BPM( unsigned char *dataReading, long buf_size/
             int SYS = val[0]+val[1];
             int DIA = val[1];
             int PUL = val[2];
-            int YEAR = val[5];
+            int YEAR = val[5]+1900;
             int MONTH = val[6];
             int DAY = val[7];
             int HOUR = val[8];
             int MIN = val[9];
             int SECOND = val[10];
             
-            sprintf( out, "%d %d %d %d %d %d %d %d %d %d", val[0], val[1], val[2], val[3], val[4], val[5], val[6], val[7], val[8], val[9], val[10] );
+            sprintf( out, "%d %d %d %d %d %d %d %d %d %d %d", val[0], val[1], val[2], val[3], val[4], val[5], val[6], val[7], val[8], val[9], val[10] );
             Serial2.println( out );
             sprintf( out, "SYS=%d DIA=%d PUL=%d YEAR=%d MONTH=%d DAY=%d HOUR=%d MIN=%d", SYS, DIA, PUL, YEAR, MONTH, DAY, HOUR, MIN );
             Serial2.println( out );
@@ -323,7 +324,7 @@ read_BP_data_after_each_measurement(char* bag, int vault_length) {
   int SYS = val[0]+val[1];
   int DIA = val[1];
   int PUL = val[2];
-  int YEAR = val[5];
+  int YEAR = val[5]+1900;
   int MONTH = val[6];
   int DAY = val[7];
   int HOUR = val[8];
@@ -398,7 +399,7 @@ void setup() {
   Serial2.println( "" );
   */
 
- delay(61000);
+  delay(61000);
   
   // read measured data
   Serial2.println( "Now issue read measured data" );
@@ -407,6 +408,11 @@ void setup() {
 
   flag=receive_BP_measurement_data_from_BPM( dataReading, BUF_SIZE );
   Serial2.println( flag );
+
+  //terminate communication mode and return to standby mode
+  Serial.write(4);
+
+  
 }
 
 
