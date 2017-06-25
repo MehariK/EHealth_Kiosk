@@ -72,7 +72,7 @@ int main(int argc, char **argv) {
 
 	bcm2835_delayMicroseconds(3000);
 
-	for(int i=0; i< 20000; i++){}
+	//for(int i=0; i< 20000; i++){}
 
 
 	//second part continoues after  the delay as put in the above line

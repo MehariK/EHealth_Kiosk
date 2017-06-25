@@ -72,7 +72,7 @@ int main(int argc, char **argv) {
 
 	bcm2835_delayMicroseconds(3000);
 
-	for(int i=0; i< 20000; i++){}
+//	for(int i=0; i< 20000; i++){}
 
 
 	//second part continoues after  the delay as put in the above line
@@ -122,7 +122,7 @@ int main(int argc, char **argv) {
 		//if (!(ret % 6))
 		//	puts("");
 		//printf("%.2X ", rx[ret]);
-		printf("Character = %d\n", *miso_readJunkHeight);
+		printf("Character = %d\n", *miso_readHeightData);
 	//}
 
 	
