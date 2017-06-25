@@ -100,7 +100,7 @@ void readRegister(char registerAddress, int numBytes, char * values){
   //Since we're performing a read operation, the most significant bit (bit 7(counting starts from bit 0)) of the register address should be set high.
   char address = 0x80 | registerAddress;
   //If we're doing a multi-byte read, bit 6 (counting starts from bit 0)needs to be set high as well.
-  if(numBytes > 1)address = address | 0x40;
+  if(numBytes > 1)address = addres s | 0x40;
 
   //Set the Chip select pin low to start an SPI packet.
   digitalWrite(CS, LOW);

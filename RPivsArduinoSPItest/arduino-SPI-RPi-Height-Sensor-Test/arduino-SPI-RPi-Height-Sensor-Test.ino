@@ -15,13 +15,15 @@
 #define ECHOPIN 8
 
 // defines variables
-long duration;
-uint8_t distance;
+volatile long duration;
+volatile uint8_t distance;
+volatile uint8_t height;
 
 volatile uint8_t sumValueIN;
-volatile uint8_t valueIN[1];
-uint8_t junkValueOUT[]= {0x01};
-volatile uint8_t valueOUT[] = {0xAA};
+volatile uint8_t valueIN[1]= {0};
+uint8_t junkValueOUT[1]= {0x01};
+volatile uint8_t valueOUT[1] = {0xAA};
+volatile uint8_t rpiThx[1]= {0x4};
 
 
 
@@ -35,6 +37,10 @@ volatile uint8_t valueOUT[] = {0xAA};
 void setup (void)
 {
   Serial.begin (115200);   // debugging
+
+
+  //Set the clock to communicate with RPi at 4MHz
+ SPI.setClockDivider(SPI_CLOCK_DIV4);
 
   spi_init_slave();
 
@@ -61,14 +67,12 @@ void setup (void)
   // turn on SPI in slave mode
   //SPCR |= _BV(SPE);
 
- //SPI.setClockDivider(SPI_CLOCK_DIV128);
-
 //I have uncommented the following implementation to troubleshoot multi slave caused bus issue
  // SPI.beginTransaction(SPISettings(20000000, MSBFIRST, SPI_MODE0));
   
 
   // now turn on interrupts
- // SPI.attachInterrupt();
+  // SPI.attachInterrupt();
 
 }  // end of setup
 
@@ -79,7 +83,8 @@ void loop (void)
 {
   //Serial.println("SPCR register content");
   // Serial.println(SPCR,BIN);
-  //if (digitalRead (CS) == LOW){
+  valueIN[0] = spi_tranceiver_junk_send();
+    //if (digitalRead(CS)==LOW){
   //optimized code using register values to read CS pin status
                
               //  if ((PINB & _BV(PB2)) == B00000100){
@@ -87,18 +92,57 @@ void loop (void)
                        // if ((_BV(PB2)) == B00000100){
                 
                                 // SPI.beginTransaction(SPISettings(14000000, MSBFIRST, SPI_MODE0));
-                              readRequestRaspiCommand(valueIN, junkValueOUT);
+                              //readRequestRaspiCommand(valueIN);
+                             //valueIN[0] = spi_tranceiver_junk_send();
                              // sumValueIN = valueIN;
                             //  Serial.println(valueIN[0]);
                              // Serial.println(valueIN[1]);
                             //  Serial.println(valueIN[2]);
                             //  Serial.println(sumValueIN);
-                              measureHeight(valueIN, valueOUT);
+                            // Serial.println(valueIN[0]);
+                             // measureHeight(valueIN, valueOUT);
                              //  printRaspiCommand(12,valueIN);
                             //   SPI.endTrasnsaction();
+                      // Measured Height function copied here
+
+                      //request for measuring height by RPi command interpreted by 
+                      //addition of consecutive values in a buffer to be used as a command
+                      Serial.print("valueIN[0]");
+                      Serial.println(valueIN[0]);
+                      height = readHeightSensor();
+                      //SPDR = height;
+                      if(valueIN[0]==0x0A){
+                         SPDR = height;
+                         //*valueOUT = height;
+                         // spi_tranceiver(valueOUT);
+                      //SPDR = readHeightSensor();
+                      // SPDR = readHeightSensor();
+                       // 
+                        Serial.println("10");
+                       // distance = readHeightSensor();
+                      }
+                      //request by RPi to transmit the data read from the Height Sensor
+                      else if(valueIN[0]==0x14){
+                           //SPDR = height;
+                          // *junkValueOUT = 0xFA;
+                           //sendSensorReadingToRaspiCommand(valueOUT);
+                          // spi_tranceiver(junkValueOUT);
+                           //readRequestRaspiCommand(rpiThx, valueOUT);
+                            //Send recorded height measurement back to RasPi
+                             Serial.println("20");
+                      }
+                      *valueIN = 0xFF;
+                     // int x = readHeightSensor();
+                      Serial.print("height");
+                      Serial.println(height);
+
+      //measured height function ends here
+
+                            
                      //   }
             //  } //if ends here
-              
+   // }  //if        
+    delayMicroseconds(1000);
 }  // end of loop
 
 // Initialize SPI Slave Device
@@ -121,14 +165,15 @@ void spi_init_slave (void)
 
 
 
-void readRequestRaspiCommand(uint8_t * valueIN, uint8_t * junkValueOUT){
+void readRequestRaspiCommand(uint8_t * valueIN){
 
   //digitalWrite(CS, LOW);
   //SPI.transfer(address);
 
   //for(int i=0; i<numBytes; i++){
     //valueIN[i] = SPI.transfer(junkValueOUT[0]);
-    valueIN[0] = spi_tranceiver(junkValueOUT[0]);
+    //valueIN[0] = spi_tranceiver(junkValueOUT[0]);
+   // valueIN[0] = spi_tranceiver_junk_send();
    // Serial.println(char(valueIN[i]));
    //  }
  
@@ -139,19 +184,24 @@ void  measureHeight(uint8_t * valueIN, uint8_t * valueOUT){
 
       //request for measuring height by RPi command interpreted by 
       //addition of consecutive values in a buffer to be used as a command
-      if(*valueIN == 10){
-        Serial.println(sumValueIN);
+      if(*valueIN == 0x0A){
+      //readRequestRaspiCommand(rpiThx, junkValueOUT);
+      *junkValueOUT = 0x45;
+       // SPDR = 0x45;
+        spi_tranceiver(junkValueOUT);
+        Serial.println("10");
        // distance = readHeightSensor();
       }
-
       //request by RPi to transmit the data read from the Height Sensor
-      if(*valueIN == 0x14) {
-           *valueOUT = 0x45;
+      else if(*valueIN == 0x14) {
+           //*valueOUT = 0x75;
            //sendSensorReadingToRaspiCommand(valueOUT);
            spi_tranceiver(valueOUT);
+           //readRequestRaspiCommand(rpiThx, valueOUT);
             //Send recorded height measurement back to RasPi
-              Serial.println("Sending");
+             Serial.println("20");
       }
+      *valueIN = 0xFF;
 }
 
 
@@ -198,6 +248,23 @@ uint8_t spi_tranceiver (uint8_t * valueOUT)
     return(SPDR);  
 }
 
+uint8_t spi_tranceiver_junk_send ()
+{
+   // set MISO HIGH
+    //DDRB |= _BV(PB4);
+    // Load data into the buffer
+    //SPDR = 0xFF;
+ 
+    //Wait until transmission complete
+    while(!(SPSR & (1<<SPIF) ));
+    
+    //set MISO LOW
+    //DDRB &= ~(_BV(PB4)); 
+    
+    // Return received data
+    return(SPDR);  
+}
+
 uint8_t readHeightSensor(){
 
 // Clears the trigPin
@@ -212,7 +279,7 @@ uint8_t readHeightSensor(){
     // Calculating the distance
     //distance= duration*0.034/2;
     
-    return duration*0.034/2;
+    return (duration*0.034/2);
 
     
     // Prints the distance on the Serial Monitor
