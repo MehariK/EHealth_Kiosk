@@ -1,0 +1,86 @@
+/**
+   Calculate the CCITT-CRC16 of the supplied frame.
+*/
+static uint16_t calculate_crc(uint16_t initial_crc, const unsigned char *buffer, unsigned int length)
+{
+  uint16_t crc = initial_crc;
+  if (buffer != NULL)
+  {
+    for (unsigned int index = 0; index < length; index++)
+    {
+      crc = (uint16_t)((unsigned char)(crc >> 8) | (uint16_t)(crc << 8));
+      crc ^= buffer [index];
+      crc ^= (unsigned char)(crc & 0xff) >> 4;
+      crc ^= (uint16_t)((uint16_t)(crc << 8) << 4);
+      crc ^= (uint16_t)((uint16_t)((crc & 0xff) << 4) << 1);
+    }
+  }
+  return (crc);
+}
+
+char *strdup_asciify(const unsigned char *p, unsigned int len)
+{
+  char *s, *ret;
+
+  s = malloc(len + 1);
+  if (NULL == s)
+    return NULL;
+
+  ret = s;
+
+  for (int i=0; i<len; i++) {
+    if (isprint(p[i]))
+      *s++ = p[i];
+    else
+      *s++ = '.';
+  }
+
+  *s = '\0';
+
+  return ret;
+}
+
+char *xstrdup_asciify(const unsigned char *p, unsigned int len)
+{
+  char *s = strdup_asciify(p, len);
+  if (NULL == s)
+//    fatal("Out of memory");
+  return s;
+}
+
+char *strdup_hexdump(const unsigned char *p, unsigned int len)
+{
+  const char lookup[] = "0123456789abcdef";
+  char *s, *ret;
+
+  /* For every 4 bytes in len we will require 9 characters to display it.
+   * We also need a terminating byte and to account for rounding errors.
+   */
+  s = malloc(((len * 9) / 4) + 2);
+  if (NULL == s)
+    return NULL;
+
+  ret = s;
+
+  for (int i=0; i<len; i++) {
+    if (i && 0 == (i % 4))
+      *s++ = ' ';
+
+    *s++ = lookup[p[i] >> 4];
+    *s++ = lookup[p[i] & 0x0f];
+  }
+
+  *s = '\0';
+
+  return ret;
+}
+
+char *xstrdup_hexdump(const unsigned char *p, unsigned int len)
+{
+  char *s = strdup_hexdump(p, len);
+  if (NULL == s)
+//    fatal("Out of memory");
+  return s;
+}
+
+

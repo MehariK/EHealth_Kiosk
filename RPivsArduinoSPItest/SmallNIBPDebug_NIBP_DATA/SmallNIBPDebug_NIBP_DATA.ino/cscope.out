@@ -1,0 +1,1295 @@
+cscope 15 $HOME/Mehari/KIC/Theme Study B/Prototype/RPivsArduinoSPItest/SmallNIBPDebug_NIBP_DATA/SmallNIBPDebug_NIBP_DATA.ino               0000007471
+	@SmallNIBPDebug_NIBP_DATA.ino.ino
+
+1 
+	~<Soáw¬eS”Ÿl.h
+>
+
+3 
+by‹
+ 
+	gcmd_»que¡_Ý’_comm_pÜt
+[]= {
+
+7 
+	gACK_·ck‘_Ëngth
+ = 6;
+
+8 
+by‹
+ 
+	gACK_·ck‘
+[]= {
+
+12 
+	gNAK_·ck‘_Ëngth
+ = 6;
+
+13 
+by‹
+ 
+	gNAK_·ck‘
+[]= {
+
+18 
+Soáw¬eS”Ÿl
+ 
+S”Ÿl2
+(8,9);
+
+20 *
+decodeMes§ge
+Ð*
+mes
+, 
+n
+ );
+
+22 
+bšToHex
+Ð
+š
+ );
+
+24 
+»ad_BP_d©a_aá”_—ch_m—su»m’t
+(* 
+vauÉ
+);
+
+27 
+	$issue_commªd_to_BPM
+Ð
+com1
+, 
+com2
+ ){
+
+28 
+S”Ÿl2
+.
+	`´šŽn
+( "check0" );
+
+29 
+ack_»ûived
+ = 0;
+
+30 
+cmd_äame
+[8]= { 0x02, 0x43, 0x50, 0x43, 0x00, 0x00, 0x00 };
+
+31 
+sum
+=0;
+
+32 
+cmd_äame
+[4] = 
+com1
+;
+
+33 
+cmd_äame
+[5] = 
+com2
+;
+
+34  
+i
+=1; i<6; i++ ) {
+
+35 
+sum
+ +ð
+cmd_äame
+[
+i
+];
+
+37 
+cmd_äame
+[6] = 
+sum
+ & 0xff;
+
+39  
+ŒŸl
+=0;rial<3;rial++ ) {
+
+40 
+S”Ÿl
+.
+	`wr™e
+Ð
+cmd_äame
+, 7 );
+
+43 
+d©aR—dšg
+[100] = {};
+
+44 
+S”Ÿl2
+.
+	`´šŽn
+( "check1" );
+
+45  
+S”Ÿl
+.
+	`avažabË
+() == 0 );
+
+46 
+S”Ÿl2
+.
+	`´šŽn
+( "check2" );
+
+47 
+	`d–ay
+( 10 );
+
+48 
+num_by‹s
+ = 
+S”Ÿl
+.
+	`avažabË
+();
+
+49 
+S”Ÿl
+.
+	`»adBy‹s
+(
+d©aR—dšg
+,
+num_by‹s
+);
+
+52 ifÐ
+d©aR—dšg
+[5] == 0x06 ) {
+
+53 
+ack_»ûived
+ = 1;
+
+55 } ifÐ
+d©aR—dšg
+[5] != 0x15 ) {
+
+59 Ð
+ack_»ûived
+ );
+
+60 
+	}
+}
+
+63 
+	$issue_commªd_ªd_check_ack
+Ð
+com1
+, 
+com2
+, *
+sucûss
+, *
+çžu»
+ ) {
+
+64 
+code
+ = 
+	`issue_commªd_to_BPM
+Ð
+com1
+, 
+com2
+ );
+
+65 ifÐ
+code
+ !ð0 ) { 
+S”Ÿl2
+.
+	`´šŽn
+Ð
+sucûss
+ );
+
+66 } { 
+S”Ÿl2
+.
+	`´šŽn
+Ð
+çžu»
+ );}
+
+67 
+	}
+}
+
+71 
+boÞ—n
+
+
+72 
+	$»ûive_commªd_äom_BPM
+Ð*
+d©aR—dšg
+, 
+buf_size
+ ) {
+
+73 
+boÞ—n
+ 
+sucûss
+=
+çl£
+;
+
+74 
+d©a_Ëngth
+;
+
+75 
+·ck‘_Ëngth
+;
+
+76  
+ŒŸl
+=0;rial<3;rial++ ) {
+
+77 
+num_by‹s
+=0;
+
+78 
+·ck‘_Ëngth
+ = 100000;
+
+81  
+S”Ÿl
+.
+	`avažabË
+() == 0 );
+
+82 
+d©aR—dšg
+[
+num_by‹s
+++] = 
+S”Ÿl
+.
+	`»ad
+();
+
+83 ifÐ
+num_by‹s
+ >ð
+buf_size
+ ) {
+
+84 
+S”Ÿl2
+.
+	`´šŽn
+( "buffer overflow!" );
+
+86 ifÐ
+num_by‹s
+ >= 8 ) {
+
+87 
+d©a_Ëngth
+ = 0;
+
+88  
+i
+=0; i<4; i++ ) {
+
+89 
+d©a_Ëngth
+ *= 16;
+
+90 
+dig™
+ = 
+d©aR—dšg
+[4+
+i
+];
+
+91 ifÐ
+dig™
+ >ð'A' && dig™ <ð'F' ) 
+d©a_Ëngth
+ += digit - 'A' + 10;
+
+92 ifÐ
+dig™
+ >ð'a' && dig™ <ð'f' ) 
+d©a_Ëngth
+ += digit - 'a' + 10;
+
+93 
+d©a_Ëngth
+ +ð
+dig™
+ - '0';
+
+96 
+·ck‘_Ëngth
+ = 
+d©a_Ëngth
+ + 10;
+
+103 }  
+num_by‹s
+ < 
+·ck‘_Ëngth
+ );
+
+104 
+S”Ÿl2
+.
+	`´šŽn
+Ð
+·ck‘_Ëngth
+ );
+
+108 
+sum
+=0;
+
+109  
+i
+=1; i<
+·ck‘_Ëngth
+-1; i++ ) {
+
+110 
+sum
+ +ð
+d©aR—dšg
+[
+i
+];
+
+112 
+sum
+ &= 0xff;
+
+113 ifÐ
+sum
+ =ð
+d©aR—dšg
+[
+num_by‹s
+-1] ) {
+
+114 
+S”Ÿl
+.
+	`wr™e
+Ð
+ACK_·ck‘
+, 
+ACK_·ck‘_Ëngth
+ );
+
+115 
+S”Ÿl2
+.
+	`´šŽn
+( "ACK sent" );
+
+117 
+sucûss
+ = 
+Œue
+;
+
+121 
+S”Ÿl
+.
+	`wr™e
+Ð
+NAK_·ck‘
+, 
+NAK_·ck‘_Ëngth
+ );
+
+122 
+S”Ÿl2
+.
+	`´šŽn
+( "NAK sent" );
+
+128 *
+out
+ = 
+	`decodeMes§ge
+Ð
+d©aR—dšg
++9, 
+d©a_Ëngth
+ );
+
+130 
+S”Ÿl2
+.
+	`´šŽn
+(
+out
+);
+
+137 Ð
+sucûss
+ );
+
+138 
+	}
+}
+
+142 
+boÞ—n
+
+
+143 
+	$»ûive_BP_m—su»m’t_d©a_äom_BPM
+Ð*
+d©aR—dšg
+, 
+buf_size
+ ) {
+
+144 
+boÞ—n
+ 
+sucûss
+=
+çl£
+;
+
+145 
+d©a_Ëngth
+;
+
+146 
+·ck‘_Ëngth
+;
+
+147  
+ŒŸl
+=0;rial<3;rial++ ) {
+
+148 
+num_by‹s
+=0;
+
+149 
+·ck‘_Ëngth
+ = 100000;
+
+152  
+S”Ÿl
+.
+	`avažabË
+() == 0 );
+
+153 
+d©aR—dšg
+[
+num_by‹s
+++] = 
+S”Ÿl
+.
+	`»ad
+();
+
+154 ifÐ
+num_by‹s
+ >ð
+buf_size
+ ) {
+
+155 
+S”Ÿl2
+.
+	`´šŽn
+( "buffer overflow!" );
+
+157 ifÐ
+num_by‹s
+ >= 8 ) {
+
+158 
+d©a_Ëngth
+ = 0;
+
+159  
+i
+=0; i<4; i++ ) {
+
+160 
+d©a_Ëngth
+ *= 16;
+
+161 
+dig™
+ = 
+d©aR—dšg
+[4+
+i
+];
+
+162 ifÐ
+dig™
+ >ð'A' && dig™ <ð'F' ) 
+d©a_Ëngth
+ += digit - 'A' + 10;
+
+163 ifÐ
+dig™
+ >ð'a' && dig™ <ð'f' ) 
+d©a_Ëngth
+ += digit - 'a' + 10;
+
+164 
+d©a_Ëngth
+ +ð
+dig™
+ - '0';
+
+167 
+·ck‘_Ëngth
+ = 
+d©a_Ëngth
+ + 10;
+
+174 }  
+num_by‹s
+ < 
+·ck‘_Ëngth
+ );
+
+175 
+S”Ÿl2
+.
+	`´šŽn
+Ð
+·ck‘_Ëngth
+ );
+
+179 
+sum
+=0;
+
+180  
+i
+=1; i<
+·ck‘_Ëngth
+-1; i++ ) {
+
+181 
+sum
+ +ð
+d©aR—dšg
+[
+i
+];
+
+183 
+sum
+ &= 0xff;
+
+184 ifÐ
+sum
+ =ð
+d©aR—dšg
+[
+num_by‹s
+-1] ) {
+
+185 
+S”Ÿl
+.
+	`wr™e
+Ð
+ACK_·ck‘
+, 
+ACK_·ck‘_Ëngth
+ );
+
+186 
+S”Ÿl2
+.
+	`´šŽn
+( "ACK sent" );
+
+188 
+sucûss
+ = 
+Œue
+;
+
+192 
+S”Ÿl
+.
+	`wr™e
+Ð
+NAK_·ck‘
+, 
+NAK_·ck‘_Ëngth
+ );
+
+193 
+S”Ÿl2
+.
+	`´šŽn
+( "NAK sent" );
+
+199 *
+out
+ = 
+	`decodeMes§ge
+Ð
+d©aR—dšg
++9, 
+d©a_Ëngth
+ );
+
+201 
+S”Ÿl2
+.
+	`´šŽn
+(
+out
+);
+
+203 
+	`»ad_BP_d©a_aá”_—ch_m—su»m’t
+(
+out
+);
+
+208 
+S”Ÿl2
+.
+	`´šŽn
+(
+out
+);
+
+209 Ð
+sucûss
+ );
+
+210 
+	}
+}
+
+217 
+	$decodeMes§ge
+Ð*
+mes
+, 
+n
+ ) {
+
+218 
+out
+[100];
+
+219 
+i
+;
+
+220  
+i
+=0; i<
+n
+; i++ ) {
+
+221 
+out
+[
+i
+*2] = 
+	`bšToHex
+Ð(
+mes
+[i]>>4)&0xf );
+
+222 
+out
+[
+i
+*2+1] = 
+	`bšToHex
+Ð
+mes
+[i]&0xf );
+
+224 
+out
+[2*
+i
+] = '\0';
+
+225 Ð
+out
+ );
+
+226 
+	}
+}
+
+229 
+	$decodeTwoBy‹sHEX
+Ð*
+p
+ ) {
+
+230 
+v®
+=0;
+
+231  
+i
+=0; i<2; i++, 
+p
+++ ) {
+
+232 
+v®
+ *= 16;
+
+233 ifÐ*
+p
+ >ð'A' && *°<ð'F' ) 
+v®
+ += *p - 'A';
+
+234 ifÐ*
+p
+ >ð'a' && *°<ð'f' ) 
+v®
+ += *p - 'a';
+
+235 
+v®
+ +ð*
+p
+ - '0';
+
+237 Ð
+v®
+ );
+
+238 
+	}
+}
+
+241 
+	$»ad_mes§ge_aá”_m—su»m’t
+() {
+
+242  
+S”Ÿl
+.
+	`avažabË
+()==0 );
+
+243 
+	`d–ay
+( 20 );
+
+244 
+num_by‹s
+=
+S”Ÿl
+.
+	`avažabË
+();
+
+245 
+buf
+[100];
+
+246 
+S”Ÿl
+.
+	`»adBy‹s
+Ð
+buf
+, 
+num_by‹s
+ );
+
+247 
+buf
+[
+num_by‹s
+] = '\0';
+
+248 
+S”Ÿl2
+.
+	`´šŽn
+Ð
+buf
+ );
+
+250 
+v®
+[5];
+
+251  
+i
+=0; i<5; i++ ) {
+
+252 
+v®
+[
+i
+] = 
+	`decodeTwoBy‹sHEX
+Ð
+buf
++i*2 );
+
+254 
+SYS
+ = 
+v®
+[1]+val[2];
+
+255 
+DIA
+ = 
+v®
+[2];
+
+256 
+PUL
+ = 
+v®
+[3];
+
+257 
+	`¥rštf
+Ð
+buf
+, "%d %d %d %d %d", 
+v®
+[0], val[1], val[2], val[3], val[4] );
+
+258 
+S”Ÿl2
+.
+	`´šŽn
+Ð
+buf
+ );
+
+259 
+	`¥rštf
+Ð
+buf
+, "SYS=%d DIA=%d PUL=%d", 
+SYS
+, 
+DIA
+, 
+PUL
+ );
+
+260 
+S”Ÿl2
+.
+	`´šŽn
+Ð
+buf
+ );
+
+261 
+	}
+}
+
+266 
+	$»ad_BP_d©a_aá”_—ch_m—su»m’t
+(* 
+vauÉ
+) {
+
+269 
+num_by‹s
+=(
+vauÉ
+);
+
+272 
+vauÉ
+[
+num_by‹s
+] = '\0';
+
+273 
+S”Ÿl2
+.
+	`´šŽn
+Ð
+vauÉ
+ );
+
+275 
+v®
+[11];
+
+276  
+i
+=0; i<11; i++ ) {
+
+277 
+v®
+[
+i
+] = 
+	`decodeTwoBy‹sHEX
+Ð
+vauÉ
++i*2 );
+
+279 
+SYS
+ = 
+v®
+[0]+val[1];
+
+280 
+DIA
+ = 
+v®
+[1];
+
+281 
+PUL
+ = 
+v®
+[2];
+
+282 
+YEAR
+ = 
+v®
+[5];
+
+283 
+MONTH
+ = 
+v®
+[6];
+
+284 
+DAY
+ = 
+v®
+[7];
+
+285 
+HOUR
+ = 
+v®
+[8];
+
+286 
+MIN
+ = 
+v®
+[9];
+
+287 
+SECOND
+ = 
+v®
+[10];
+
+289 
+	`¥rštf
+Ð
+vauÉ
+, "%d %d %d %d %d %d %d %d %d %d", 
+v®
+[0], val[1], val[2], val[3], val[4], val[5], val[6], val[7], val[8], val[9], val[10] );
+
+290 
+S”Ÿl2
+.
+	`´šŽn
+Ð
+vauÉ
+ );
+
+291 
+	`¥rštf
+Ð
+vauÉ
+, "SYS=%d DIA=%d PUL=%d YEAR=%d MONTH=%d DAY=%d HOUR=%d MIN=%d", 
+SYS
+, 
+DIA
+, 
+PUL
+, 
+YEAR
+, 
+MONTH
+, 
+DAY
+, 
+HOUR
+, 
+MIN
+ );
+
+292 
+S”Ÿl2
+.
+	`´šŽn
+Ð
+vauÉ
+ );
+
+293 
+	}
+}
+
+299 
+	$»ad_deviû_id
+() {
+
+301 
+	`issue_commªd_ªd_check_ack
+( 0x31, 0x33,
+
+305 
+boÞ—n
+ 
+æag
+=
+	`»ûive_commªd_äom_BPM
+Ð
+d©aR—dšg
+, 
+BUF_SIZE
+ );
+
+306 
+S”Ÿl2
+.
+	`´šŽn
+Ð
+æag
+ );
+
+307 
+	}
+}
+
+311 
+	$£tup
+() {
+
+312 
+boÞ—n
+ 
+æag
+;
+
+313 
+S”Ÿl2
+.
+	`begš
+(57600);
+
+316 
+S”Ÿl
+.
+	`begš
+(9600,
+SERIAL_8N2
+);
+
+318 
+S”Ÿl
+.
+	`wr™e
+(0);
+
+321 
+	`d–ay
+(100);
+
+325 
+	`issue_commªd_ªd_check_ack
+( 0x30, 0x35, "Port opened!", "Error in open…ort!" );
+
+327 
+	`d–ay
+( 1000 );
+
+330 
+S”Ÿl2
+.
+	`´šŽn
+( "Now delete measured data‡lready„etrieved from memory" );
+
+331 
+	`issue_commªd_ªd_check_ack
+( 0x31, 0x32,
+
+334 
+	#BUF_SIZE
+ 500
+
+	)
+
+336 
+d©aR—dšg
+[
+BUF_SIZE
+];
+
+340 
+	`issue_commªd_ªd_check_ack
+( 0x34, 0x30, "Measurement started!",
+
+343 
+	`»ad_mes§ge_aá”_m—su»m’t
+();
+
+357 
+	`d–ay
+(61000);
+
+360 
+S”Ÿl2
+.
+	`´šŽn
+( "Now issue„ead measured data" );
+
+361 
+	`issue_commªd_ªd_check_ack
+( 0x31, 0x30,
+
+364 
+æag
+=
+	`»ûive_BP_m—su»m’t_d©a_äom_BPM
+Ð
+d©aR—dšg
+, 
+BUF_SIZE
+ );
+
+365 
+S”Ÿl2
+.
+	`´šŽn
+Ð
+æag
+ );
+
+366 
+	}
+}
+
+370 
+	$bšToHex
+Ð
+š
+ ) {
+
+371 ifÐ
+š
+ > 9 ) {
+
+372 Ð
+š
+-10+'a');
+
+374 Ð
+š
++'0');
+
+376 
+	}
+}
+
+383 
+	$loÝ
+() {
+
+385 ifÐ
+S”Ÿl
+.
+	`avažabË
+()) {
+
+386 
+	`d–ay
+( 20 );
+
+387 
+num_by‹s
+=
+S”Ÿl
+.
+	`avažabË
+();
+
+388 
+buf
+[100];
+
+389 
+S”Ÿl
+.
+	`»adBy‹s
+Ð
+buf
+, 
+num_by‹s
+ );
+
+390 
+S”Ÿl2
+.
+	`´šŽn
+Ð
+	`decodeMes§ge
+Ð
+buf
+, 
+num_by‹s
+ ) );
+
+392 
+	}
+}
+
+	@
+1
+.
+1
+/usr/include
+1
+33
+SmallNIBPDebug_NIBP_DATA.ino.ino
