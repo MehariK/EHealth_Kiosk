@@ -13,7 +13,7 @@ int main(int argc, char **argv) {
 	bcm2835_spi_begin();
 	bcm2835_spi_setBitOrder(BCM2835_SPI_BIT_ORDER_MSBFIRST);      // The default
 	bcm2835_spi_setDataMode(BCM2835_SPI_MODE0);                   // The default
-	bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_64);    // ~ o KHz
+	bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_2048);    // ~ o KHz
    	bcm2835_spi_chipSelect(BCM2835_SPI_CS_NONE);                      // The default
    //   bcm2835_spi_setChipSelectPolarity(nibp_CS, LOW);      // the default
 
@@ -24,11 +24,11 @@ int main(int argc, char **argv) {
 
 	//uint8_t mosi[10] = { 0x60, 0x00 };
 	uint8_t mosi_Start_Read_NIBP_Process[1] = {0x0A};
-	uint8_t miso_readJunkHeight[11];
-	//uint8_t moutsi[12] = { 0 };
-	uint8_t miso_readHeightData[11];
-	uint8_t mosi_Copy_NIBP_Data[11] = {0x14,0x14,0x14,0x14,0x14,0x14,0x14,0x14,0x14,0x14,0x14};
-	
+	uint8_t miso_trigger_NIBP_Measurement[1] = {0x0};
+	uint8_t miso_receive_ack_for_first_call_for_data[1] ;
+	uint8_t miso_copy_NIBP_Data[11];
+	uint8_t mosi_trigger_NIBP_Data[11] = {0x14,0x14,0x14,0x14,0x14,0x14,0x14,0x14,0x14,0x14,0x14};
+	uint8_t mosi_first_call_for_data[1] = {0x14};
 
 	// ///////// This is the first part of the request  to the Height Sensor/////////////
 	//										   //
@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
 
 	//for (char ret = 0; ret < 12; ret++) {
 		//transfer here
-		miso_readJunkHeight[0] = bcm2835_spi_transfer(mosi_Start_Read_NIBP_Process[0]);
+		miso_trigger_NIBP_Measurement[0] = bcm2835_spi_transfer(mosi_Start_Read_NIBP_Process[0]);
 	//}
 
 
@@ -71,9 +71,14 @@ int main(int argc, char **argv) {
 	////////////////////////////////////////////////////////////////////////////////////
 
 	//bcm2835_delayMicroseconds(3000);
-	delay(62000);
+	//printf("Arduino sent the following ack for the trigger: "); 
+	//printf("%d",miso_trigger_NIBP_Measurement[0]);
+	//printf("\n");
+	if((int)miso_trigger_NIBP_Measurement[0]==0x0F){
 
-	for(int i=0; i< 20000; i++){}
+	delay(130000);
+
+	//for(int i=0; i< 20000; i++){}
 
 
 	//second part continoues after  the delay as put in the above line
@@ -90,6 +95,7 @@ int main(int argc, char **argv) {
 */
 
 
+
 	
 	//custom chip select set to low here
 
@@ -103,10 +109,27 @@ int main(int argc, char **argv) {
 	//create some delay to help match the clock and the cs
 	//bcm2835_delay(10);
 
-	for (char ret = 0; ret < 12; ret++) {
+	miso_receive_ack_for_first_call_for_data[0] = bcm2835_spi_transfer(mosi_first_call_for_data[0]);
+
+	bcm2835_delayMicroseconds(.244);	
+
+	bcm2835_gpio_write(NIBP_CS,HIGH);
+
+	// this is the attempt to read the BP Measurement data
+	//bcm2835_delayMicroseconds(7000);
+	delay(7);
+
+
+
+	bcm2835_gpio_write(NIBP_CS,LOW);
+
+	bcm2835_delayMicroseconds(.777);
+
+	//for (char ret = 0; ret < 12; ret++) {
 		//transfer here
-		miso_readHeightData[ret] = bcm2835_spi_transfer(mosi_Copy_NIBP_Data[ret]);
-	}
+
+		bcm2835_spi_transfernb(miso_copy_NIBP_Data,mosi_trigger_NIBP_Data,11);
+	//}
 
 
 	//set custom chip select to high after finishing transfer here
@@ -114,7 +137,7 @@ int main(int argc, char **argv) {
 	//the CS line will be de-asserted no earlier than 1 core clock cycle 
 	//after the trailing edge of teh final clock pulse
 
-	bcm2835_delayMicroseconds(.777);
+	bcm2835_delayMicroseconds(.244);
 
 	bcm2835_gpio_write(NIBP_CS,HIGH);
 
@@ -123,9 +146,12 @@ int main(int argc, char **argv) {
 		//if (!(ret % 6))
 		//	puts("");
 		//printf("%.2X ", rx[ret]);
-		printf("Systolic Reading is = %d\n", (miso_readHeightData[0]+ miso_readHeightData[1]));
+		
+	sprintf(miso_copy_NIBP_Data, "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d", miso_copy_NIBP_Data[0], miso_copy_NIBP_Data[1],miso_copy_NIBP_Data[2],miso_copy_NIBP_Data[3],miso_copy_NIBP_Data[4],miso_copy_NIBP_Data[5],miso_copy_NIBP_Data[5],miso_copy_NIBP_Data[6],miso_copy_NIBP_Data[7],miso_copy_NIBP_Data[8],miso_copy_NIBP_Data[9],miso_copy_NIBP_Data[10]);
+	printf(miso_copy_NIBP_Data);
+	printf("Systolic Reading is = %d\n", (miso_copy_NIBP_Data[0]+ miso_copy_NIBP_Data[1]));
 	//}
-
+	}//END OF IF CHECKING FOR  miso_trigger_NIBP_Measurement[0] RESULT FOR 0X15
 	
 	bcm2835_spi_end();
 	bcm2835_close();	
