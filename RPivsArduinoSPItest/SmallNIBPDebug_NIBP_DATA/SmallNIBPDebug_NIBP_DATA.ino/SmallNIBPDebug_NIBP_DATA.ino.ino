@@ -410,7 +410,8 @@ void setup() {
   Serial2.println( flag );
 
   //terminate communication mode and return to standby mode
-  Serial.write(4);
+  //Serial.write(4);
+  issue_command_and_check_ack( 0x30, 0x34, /* open connect1ion */ "Port closed!", "Error in closing port!" );
 
   
 }

@@ -109,9 +109,10 @@ void loop (void)
                       //addition of consecutive values in a buffer to be used as a command
                       Serial.print("valueIN[0]");
                       Serial.println(valueIN[0]);
-                      height = readHeightSensor();
+                    //  height = readHeightSensor();
                       //SPDR = height;
                       if(valueIN[0]==0x0A){
+                         height = readHeightSensor();
                          SPDR = height;
                          //*valueOUT = height;
                          // spi_tranceiver(valueOUT);
