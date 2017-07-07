@@ -26,6 +26,21 @@ volatile uint8_t valueOUT[1] = {0xAA};
 volatile uint8_t rpiThx[1]= {0x4};
 
 
+//for height measurement
+
+int countDataCollected = 0;
+int countSmoothDataCollected = 0;
+int maxDataCollected = 100;
+int maxSmoothedDataCollected = 25;
+
+float heightMeasured[100];
+
+//smoothed average height array
+float smoothedAverageHeight[25];
+
+//smoothed median height array
+float smoothedMedianHeight[25];
+
 
 //#define CS_BIT  2
 
@@ -98,10 +113,10 @@ void loop (void)
                             //  Serial.println(valueIN[0]);
                              // Serial.println(valueIN[1]);
                             //  Serial.println(valueIN[2]);
-                            //  Serial.println(sumValueIN);
                             // Serial.println(valueIN[0]);
                              // measureHeight(valueIN, valueOUT);
                              //  printRaspiCommand(12,valueIN);
+                            //  Serial.println(sumValueIN);
                             //   SPI.endTrasnsaction();
                       // Measured Height function copied here
 
@@ -109,7 +124,44 @@ void loop (void)
                       //addition of consecutive values in a buffer to be used as a command
                       Serial.print("valueIN[0]");
                       Serial.println(valueIN[0]);
-                      height = readHeightSensor();
+
+                                      for (int countDataCollected; countDataCollected < maxDataCollected; countDataCollected++)
+                                      {
+                                        
+                                        heightMeasured[countDataCollected] = readHeightSensor();
+                                                                  
+                                      }
+
+
+
+                                      ///////////////////////////////////////////////////////////
+
+                                                   if(countDataCollected == maxDataCollected)
+                                                        {
+                                                        float measuredAverageHeight = GetAverage(heightMeasured, maxDataCollected);
+                                                        float nearRealMedianHeight =  GetMedian(heightMeasured, maxDataCollected);
+                                                        float  calculatedAverageHeight = 210.00 - measuredAverageHeight;
+                                                         
+                                                         
+                                                         //Serial.println(measuredAverageHeight); 
+                                                        // printDistance(distancesMeasured, maxDataCollected);
+                                                      
+                                                        // printVolt(voltMeasured, maxDataCollected);
+                                                        /*
+                                                        Serial.println("Your Calculated Average Height is:");
+                                                        Serial.println(calculatedAverageHeight);
+                                                        delay (500);
+                                                        Serial.println("Your Calculated Median Height is:");
+                                                        Serial.println(nearRealMedianHeight);
+                                                         Serial.println("****************************Next Person*******************************************");
+                                                        delay(3000);
+                                                        */
+                                                         
+                                                        }
+
+
+                                     /////////////////////////////////////////////////////////////////////
+                     
                       //SPDR = height;
                       if(valueIN[0]==0x0A){
                          SPDR = height;
@@ -129,7 +181,7 @@ void loop (void)
                           // spi_tranceiver(junkValueOUT);
                            //readRequestRaspiCommand(rpiThx, valueOUT);
                             //Send recorded height measurement back to RasPi
-                             Serial.println("20");
+                        Serial.println("20");
                       }
                       *valueIN = 0xFF;
                      // int x = readHeightSensor();
@@ -290,7 +342,44 @@ uint8_t readHeightSensor(){
 }
 
 
+float GetMedian(float daArray[], int iSize) {
+  // Allocate an array of the same size and sort it.
+  float* dpSorted = new float[iSize];
+  //    int arraySize = daArray.length();
+  for (int i = 0; i < iSize; ++i) {
+    dpSorted[i] = daArray[i];
+  }
+  for (int i = iSize - 1; i > 0; --i) {
+    for (int j = 0; j < i; ++j) {
+      if (dpSorted[j] > dpSorted[j + 1]) {
+        float dTemp = dpSorted[j];
+        dpSorted[j] = dpSorted[j + 1];
+        dpSorted[j + 1] = dTemp;
+      }
+    }
+  }
 
+  // Middle or average of middle values in the sorted array.
+  float dMedian = 0.0;
+  if ((iSize % 2) == 0) {
+    dMedian = (dpSorted[iSize / 2] + dpSorted[(iSize / 2) - 1]) / 2.0;
+  } else {
+    dMedian = dpSorted[iSize / 2];
+  }
+  delete [] dpSorted;
+  return dMedian;
+}
+
+float GetAverage(float daArray[], int iSize)
+{
+  float sum = 0.0;
+  for (int i = 0; i < iSize; ++i)
+  {
+    sum =  daArray[i] + sum;
+  }
+  float average = sum / (iSize - 1);
+  return average;
+}
     
 
 
