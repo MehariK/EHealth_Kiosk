@@ -32,7 +32,7 @@ int countDataCollected = 0;
 int countSmoothDataCollected = 0;
 int maxDataCollected = 100;
 int maxSmoothedDataCollected = 25;
-
+int calculatedAverageHeight;
 float heightMeasured[100];
 
 //smoothed average height array
@@ -51,18 +51,21 @@ float smoothedMedianHeight[25];
 
 void setup (void)
 {
-  Serial.begin (115200);   // debugging
+  Serial.begin (57600);   // debugging
 
 
   //Set the clock to communicate with RPi at 4MHz
- SPI.setClockDivider(SPI_CLOCK_DIV4);
+ //SPI.setClockDivider(SPI_CLOCK_DIV4);
 
-  spi_init_slave();
+ spi_init_slave();
 
    pinMode(TRIGPIN, OUTPUT); // Sets the trigPin as an Output
    pinMode(ECHOPIN, INPUT); // Sets the echoPin as an Input
 
-   
+   Serial.println("Hello this is for test");
+
+    
+    
   // have to send on master in, *slave out*
  
  // Set MISO output, all others input 
@@ -94,38 +97,23 @@ void setup (void)
 
 
 // main loop - wait for flag set in interrupt routine
-void loop (void)
+void loop ()
 {
   //Serial.println("SPCR register content");
   // Serial.println(SPCR,BIN);
-  valueIN[0] = spi_tranceiver_junk_send();
-    //if (digitalRead(CS)==LOW){
-  //optimized code using register values to read CS pin status
-               
-              //  if ((PINB & _BV(PB2)) == B00000100){
-                 // delayMicroseconds(.255);
-                       // if ((_BV(PB2)) == B00000100){
-                
-                                // SPI.beginTransaction(SPISettings(14000000, MSBFIRST, SPI_MODE0));
-                              //readRequestRaspiCommand(valueIN);
-                             //valueIN[0] = spi_tranceiver_junk_send();
-                             // sumValueIN = valueIN;
-                            //  Serial.println(valueIN[0]);
-                             // Serial.println(valueIN[1]);
-                            //  Serial.println(valueIN[2]);
-                            // Serial.println(valueIN[0]);
-                             // measureHeight(valueIN, valueOUT);
-                             //  printRaspiCommand(12,valueIN);
-                            //  Serial.println(sumValueIN);
-                            //   SPI.endTrasnsaction();
-                      // Measured Height function copied here
+   Serial.println("Just entered loop");
+ //valueIN[0] = spi_tranceiver_junk_send();
+          SPI.transfer(valueIN,1);
+         Serial.println("valueIN[0]");
+         Serial.println(valueIN[0]);
 
-                      //request for measuring height by RPi command interpreted by 
-                      //addition of consecutive values in a buffer to be used as a command
-                      Serial.print("valueIN[0]");
-                      Serial.println(valueIN[0]);
+                      unsigned long start = micros();               
+                     
+                      
+                      if(valueIN[0]==0x0A){
 
-                                      for (int countDataCollected; countDataCollected < maxDataCollected; countDataCollected++)
+
+                         for (int countDataCollected; countDataCollected < maxDataCollected; countDataCollected++)
                                       {
                                         
                                         heightMeasured[countDataCollected] = readHeightSensor();
@@ -140,7 +128,7 @@ void loop (void)
                                                         {
                                                         float measuredAverageHeight = GetAverage(heightMeasured, maxDataCollected);
                                                         float nearRealMedianHeight =  GetMedian(heightMeasured, maxDataCollected);
-                                                        float  calculatedAverageHeight = 210.00 - measuredAverageHeight;
+                                                        calculatedAverageHeight = 210.00 - measuredAverageHeight;
                                                          
                                                          
                                                          //Serial.println(measuredAverageHeight); 
@@ -153,7 +141,7 @@ void loop (void)
                                                         delay (500);
                                                         Serial.println("Your Calculated Median Height is:");
                                                         Serial.println(nearRealMedianHeight);
-                                                         Serial.println("****************************Next Person*******************************************");
+                                                         Serial.println("**********Next Person****************");
                                                         delay(3000);
                                                         */
                                                          
@@ -161,58 +149,63 @@ void loop (void)
 
 
                                      /////////////////////////////////////////////////////////////////////
-                     
-                      //SPDR = height;
-                      if(valueIN[0]==0x0A){
-                         SPDR = height;
-                         //*valueOUT = height;
+                         
+                         valueOUT[0] = calculatedAverageHeight;
                          // spi_tranceiver(valueOUT);
                       //SPDR = readHeightSensor();
                       // SPDR = readHeightSensor();
                        // 
-                        Serial.println("10");
-                       // distance = readHeightSensor();
+                        Serial.println("Just finished reading height from the bathroom scale");
+
+                        Serial.println("to read data from height measurement sensor took  # this minutes:");
+                              unsigned long end_first = micros();
+                              unsigned long delta_first = end_first - start;
+                              Serial.println(delta_first); 
+                               *valueIN = 0xFF;  
                       }
                       //request by RPi to transmit the data read from the Height Sensor
                       else if(valueIN[0]==0x14){
-                           //SPDR = height;
-                          // *junkValueOUT = 0xFA;
-                           //sendSensorReadingToRaspiCommand(valueOUT);
-                          // spi_tranceiver(junkValueOUT);
-                           //readRequestRaspiCommand(rpiThx, valueOUT);
-                            //Send recorded height measurement back to RasPi
-                        Serial.println("20");
+                           Serial.println("to export data after delay of this minutes:");
+                              unsigned long end = micros();
+                              unsigned long delta = end - start;
+                              Serial.println(delta);
+
+                                     SPI.transfer(valueOUT,1);
+                              
+                        Serial.println("Transmitted Data");
+                         *valueIN = 0xFF;
+                      }else{
+
+                        Serial.println("No match");
                       }
-                      *valueIN = 0xFF;
-                     // int x = readHeightSensor();
-                      Serial.print("height");
-                      Serial.println(height);
+                      //*valueIN = 0xFF;
 
-      //measured height function ends here
-
-                            
-                     //   }
-            //  } //if ends here
-   // }  //if        
-    delayMicroseconds(1000);
+                      //Just exited loop    
+        Serial.println("XXXXXXXXXXXXXXited the loop");    
+                     
 }  // end of loop
 
 // Initialize SPI Slave Device
-void spi_init_slave (void)
+void spi_init_slave ()
 {
-     //pinMode(MISO,OUTPUT); 
+    
       //*********************************************//
       //set the CS to input mode
      //DDRB &= B11111011;
-     DDRB &= ~(_BV(PB2));
+     //DDRB &= ~(_BV(PB2));
 
      //*********************************************//
       // enable pull up on the CS
     //PORTB |= B00000100;
      PORTB |= _BV(PB2);
     
-    DDRB = (1<<PB4);     //MISO as OUTPUT
-    SPCR = (1<<SPE);   //Enable SPI
+  
+
+  DDRB = DDRB | _BV(PB4);     //MISO as OUTPUT
+
+  // turn on SPI in slave mode
+  SPCR |= _BV(SPE);
+    
 }
 
 
