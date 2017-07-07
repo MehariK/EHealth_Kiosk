@@ -45,27 +45,30 @@ volatile uint8_t rpiThx[1]= {0x4};
 #define DOUT  3
 #define CLK  2
 
+ //SoftwareSerial mySerial(8,9); //Rx, Tx
+
 
 volatile float weight = 0;
 
 HX711 scale(DOUT, CLK);
 
 void setup() {
-  Serial.begin(115200);
+   // put your setup code here, to run once:
+            Serial.begin(57600);
 
+             //mySerial.begin(57600);
 
-//This is the setting for the SPI swap between RPi and Arduino
-  pinMode(SPIswitch,OUTPUT);
-  digitalWrite(SPIswitch, HIGH);
-
-SPI.setClockDivider(SPI_CLOCK_DIV4);
   
- //initialize SPI slave mode
-  spi_init_slave();
- // Serial.println("HX711 scale demo");
+  //SPI Settings go here
+
+  Serial.println("Hello this is for test");
+
 
  //Set the clock to communicate with RPi at 4MHz
-  
+// SPI.setClockDivider(SPI_CLOCK_DIV4);
+
+ spi_init_slave();
+
 
   scale.set_scale(calibration_factor); //This value is obtained by using the SparkFun_HX711_Calibration sketch
   scale.tare();	//Assuming there is no weight on the scale at start up, reset the scale to 0
@@ -76,23 +79,17 @@ SPI.setClockDivider(SPI_CLOCK_DIV4);
 
 void loop() {
 // digitalWrite(CLK, HIGH);
-digitalWrite(SPIswitch, LOW);
+//digitalWrite(SPIswitch, LOW);
    //scale.power_up();
-              for(int j =0; j < 1000; j++){}
-Serial.print("Reading: ");
-//Serial.print(scale.get_units(), 1); //scale.get_units() returns a float
- 
-   weight = scale.get_units();
-  digitalWrite(SPIswitch, HIGH);
- // digitalWrite(CLK, LOW);
-   //Continue receiving from the RPi even if this sensor is not activated yet
-    //if(digitalRead(DOUT) == HIGH){
-    //for(int j =0; j < 1000; j++){}
-     
-      for(int j =0; j < 1000; j++){}
-    valueIN[0] = spi_tranceiver_junk_send();
+             // for(int j =0; j < 1000; j++){}
+      Serial.print("Reading: ");
+       Serial.println("Just entered loop");
+        //valueIN[0] = spi_tranceiver_junk_send();
+        SPI.transfer(valueIN,1);
+         Serial.println("valueIN[0]");
+         Serial.println(valueIN[0]);
 
-     for(int j =0; j < 1000; j++){}
+         unsigned long start = micros();
   //  }
 
    /*
@@ -101,59 +98,83 @@ Serial.print("Reading: ");
   Serial.println();
   */
 
-                      Serial.print("valueIN[0]");
-                      Serial.println(valueIN[0]);
+                     
                       
                       //SPDR = height;
                       if(valueIN[0]==0x0A){
+
+                        
                         
                         //convert float to binary first
-                        SPDR = weight;
-                        
-                         //*valueOUT = height;
+                                         
+                         valueOUT[0] = scale.get_units();
                          // spi_tranceiver(valueOUT);
                           //SPDR = readHeightSensor();
                         // SPDR = readHeightSensor();
                        // 
-                        Serial.println("10");
+                        Serial.println("Finished measuring weight");
                        // distance = readHeightSensor();
+                        
+                        Serial.println("to read data from bathroom scale took this minutes:");
+                              unsigned long end_first = micros();
+                              unsigned long delta_first = end_first - start;
+                              Serial.println(delta_first);     
+                       
                       }
                       //request by RPi to transmit the data read from the Height Sensor
                       else if(valueIN[0]==0x14){ 
+
+                        Serial.println("to export weight measurement data takes this # minutes:");
+                              unsigned long end = micros();
+                              unsigned long delta = end - start;
+                              Serial.println(delta);
+
+                              SPI.transfer(valueOUT,11);
+                              
                            //SPDR = height;
                           // *junkValueOUT = 0xFA;
                            //sendSensorReadingToRaspiCommand(valueOUT);
                           // spi_tranceiver(junkValueOUT);
                            //readRequestRaspiCommand(rpiThx, valueOUT);
                             //Send recorded height measurement back to RasPi
-                             Serial.println("20");
+                             Serial.println("Transmitted data");
+                      }else{
+
+                        Serial.println("No match");
                       }
+                      
                       *valueIN = 0xFF;
                      // int x = readHeightSensor();
-                      Serial.print("weight");
-                      Serial.println(weight);
+                      //Serial.print("weight");
+                      //Serial.println(weight);
     
-             for(int j =0; j < 1000; j++){}
+           //Just exited loop    
+        Serial.println("XXXXXXXXXXXXXXited the loop");         
            
 }
 
 
 // Initialize SPI Slave Device
-void spi_init_slave (void)
+void spi_init_slave ()
 {
-     //pinMode(MISO,OUTPUT); 
+    
       //*********************************************//
       //set the CS to input mode
      //DDRB &= B11111011;
-     DDRB &= ~(_BV(PB2));
+     //DDRB &= ~(_BV(PB2));
 
      //*********************************************//
       // enable pull up on the CS
     //PORTB |= B00000100;
      PORTB |= _BV(PB2);
     
-    DDRB = (1<<PB4);     //MISO as OUTPUT
-    SPCR = (1<<SPE);   //Enable SPI
+  
+
+  DDRB = DDRB | _BV(PB4);     //MISO as OUTPUT
+
+  // turn on SPI in slave mode
+  SPCR |= _BV(SPE);
+    
 }
 
 //Function to send and receive data for both master and slave
