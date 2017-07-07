@@ -47,6 +47,21 @@ volatile uint8_t rpiThx[1]= {0x4};
 
  //SoftwareSerial mySerial(8,9); //Rx, Tx
 
+//Variables for weight measurement
+
+
+int countDataCollected = 0;
+int countSmoothDataCollected = 0;
+int maxDataCollected = 100;
+int maxSmoothedDataCollected = 25;
+
+float weightMeasured[100];
+ int measuredAverageWeight;
+//smoothed average height array
+float smoothedAverageWeight[25];
+
+//smoothed median height array
+float smoothedMedianWeight[25];
 
 volatile float weight = 0;
 
@@ -103,15 +118,43 @@ void loop() {
                       //SPDR = height;
                       if(valueIN[0]==0x0A){
 
-                        
-                        
-                        //convert float to binary first
-                                         
-                         valueOUT[0] = scale.get_units();
-                         // spi_tranceiver(valueOUT);
-                          //SPDR = readHeightSensor();
-                        // SPDR = readHeightSensor();
-                       // 
+                                      for (int countDataCollected; countDataCollected < maxDataCollected; countDataCollected++)
+                                      {
+                                       
+                                        weightMeasured[countDataCollected] = scale.get_units();
+                                                                            
+                                      }
+
+
+
+                                      ///////////////////////////////////////////////////////////
+
+                                                   if(countDataCollected == maxDataCollected)
+                                                        {
+                                                        measuredAverageWeight = GetAverage(weightMeasured, maxDataCollected);
+                                                        float nearRealMedianWeight =  GetMedian(weightMeasured, maxDataCollected);
+                                                        //float  calculatedAverageWeight = 210.00 - measuredAverageWeight;
+                                                         
+                                                         
+                                                         //Serial.println(measuredAverageHeight); 
+                                                        // printDistance(distancesMeasured, maxDataCollected);
+                                                      
+                                                        // printVolt(voltMeasured, maxDataCollected);
+                                                        /*
+                                                        Serial.println("Your Calculated Average Height is:");
+                                                        Serial.println(calculatedAverageHeight);
+                                                        delay (500);
+                                                        Serial.println("Your Calculated Median Height is:");
+                                                        Serial.println(nearRealMedianHeight);
+                                                         Serial.println("****************************Next Person*******************************************");
+                                                        delay(3000);
+                                                        */
+                                                         
+                                                        }
+
+
+                                     /////////////////////////////////////////////////////////////////////
+                              valueOUT[0] = measuredAverageWeight;           
                         Serial.println("Finished measuring weight");
                        // distance = readHeightSensor();
                         
@@ -139,7 +182,6 @@ void loop() {
                             //Send recorded height measurement back to RasPi
                              Serial.println("Transmitted data");
                       }else{
-
                         Serial.println("No match");
                       }
                       
@@ -212,6 +254,49 @@ uint8_t spi_tranceiver_junk_send ()
     // Return received data
     return(SPDR);  
 }
+
+
+float GetMedian(float daArray[], int iSize) {
+  // Allocate an array of the same size and sort it.
+  float* dpSorted = new float[iSize];
+  //    int arraySize = daArray.length();
+  for (int i = 0; i < iSize; ++i) {
+    dpSorted[i] = daArray[i];
+  }
+  for (int i = iSize - 1; i > 0; --i) {
+    for (int j = 0; j < i; ++j) {
+      if (dpSorted[j] > dpSorted[j + 1]) {
+        float dTemp = dpSorted[j];
+        dpSorted[j] = dpSorted[j + 1];
+        dpSorted[j + 1] = dTemp;
+      }
+    }
+  }
+
+  // Middle or average of middle values in the sorted array.
+  float dMedian = 0.0;
+  if ((iSize % 2) == 0) {
+    dMedian = (dpSorted[iSize / 2] + dpSorted[(iSize / 2) - 1]) / 2.0;
+  } else {
+    dMedian = dpSorted[iSize / 2];
+  }
+  delete [] dpSorted;
+  return dMedian;
+}
+
+float GetAverage(float daArray[], int iSize)
+{
+  float sum = 0.0;
+  for (int i = 0; i < iSize; ++i)
+  {
+    sum =  daArray[i] + sum;
+  }
+  float average = sum / (iSize - 1);
+  return average;
+}
+    
+
+
 
 //This is an attempt to implement the code for reading from the HX711 
 /*
