@@ -117,7 +117,7 @@ int main(int argc, char **argv) {
 
 	// this is the attempt to read the BP Measurement data
 	//bcm2835_delayMicroseconds(7000);
-	delay(7);
+	delay(15);
 
 
 
@@ -128,7 +128,7 @@ int main(int argc, char **argv) {
 	//for (char ret = 0; ret < 12; ret++) {
 		//transfer here
 
-		bcm2835_spi_transfernb(miso_copy_NIBP_Data,mosi_trigger_NIBP_Data,3);
+		bcm2835_spi_transfernb(mosi_trigger_NIBP_Data,miso_copy_NIBP_Data,3);
 	//}
 
 
@@ -147,11 +147,11 @@ int main(int argc, char **argv) {
 		//	puts("");
 		//printf("%.2X ", rx[ret]);
 		
-	sprintf(miso_copy_NIBP_Data, "%d,%d,%d", miso_copy_NIBP_Data[0], miso_copy_NIBP_Data[1],miso_copy_NIBP_Data[2]);
+	sprintf(miso_copy_NIBP_Data, "%d,%d,%d", miso_copy_NIBP_Data[0],miso_copy_NIBP_Data[1],miso_copy_NIBP_Data[2]);
 	printf(miso_copy_NIBP_Data);
-	printf("Systolic Reading is: %d\n", miso_copy_NIBP_Data[0]);
-	printf("Diastolic Reading is: %d\n", miso_copy_NIBP_Data[1]);
-	printf("Pulse Reading is: %d\n", miso_copy_NIBP_Data[2]);
+	printf("Systolic Reading is: %d\n",(int)miso_copy_NIBP_Data[0]);
+	printf("Diastolic Reading is: %d\n",(int)miso_copy_NIBP_Data[1]);
+	printf("Pulse Reading is: %d\n", (int)miso_copy_NIBP_Data[2]);
 	//}
 	}//END OF IF CHECKING FOR  miso_trigger_NIBP_Measurement[0] RESULT FOR 0X15
 	
