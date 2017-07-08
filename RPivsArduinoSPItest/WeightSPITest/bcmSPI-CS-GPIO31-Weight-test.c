@@ -118,7 +118,7 @@ uint8_t miso_receive_ack_for_first_call_for_data[1] ;
 	bcm2835_delayMicroseconds(.777);
 
 
-		bcm2835_spi_transfernb(miso_copy_WEIGHT_Data,mosi_trigger_WEIGHT_Data,11);
+		bcm2835_spi_transfernb(miso_copy_WEIGHT_Data,mosi_trigger_WEIGHT_Data,1);
 	
 
 
@@ -137,9 +137,9 @@ uint8_t miso_receive_ack_for_first_call_for_data[1] ;
 		//	puts("");
 		//printf("%.2X ", rx[ret]);
 		
-	sprintf(miso_copy_WEIGHT_Data, "%d", miso_copy_WEIGHT_Data[0]);
-	printf("Weight Measurement is: = %d\n",miso_copy_WEIGHT_Data);
-	//printf("Systolic Reading is = %d\n", (miso_copy_WEIGHT_Data[0]+ miso_copy_WEIGHT_Data[1]));
+	//sprintf(miso_copy_WEIGHT_Data, "%d", miso_copy_WEIGHT_Data[0]);
+	//printf("Weight Measurement is: = %d\n",miso_copy_WEIGHT_Data);
+	printf("Weight Measurement is:  %d\n", (miso_copy_WEIGHT_Data[0]));
 	//}
 	}//END OF IF CHECKING FOR  miso_trigger_WEIGHT_Measurement[0] RESULT FOR 0X15
 	
