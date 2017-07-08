@@ -26,8 +26,8 @@ int main(int argc, char **argv) {
 	uint8_t mosi_Start_Read_NIBP_Process[1] = {0x0A};
 	uint8_t miso_trigger_NIBP_Measurement[1] = {0x0};
 	uint8_t miso_receive_ack_for_first_call_for_data[1] ;
-	uint8_t miso_copy_NIBP_Data[11];
-	uint8_t mosi_trigger_NIBP_Data[11] = {0x14,0x14,0x14,0x14,0x14,0x14,0x14,0x14,0x14,0x14,0x14};
+	uint8_t miso_copy_NIBP_Data[3];
+	uint8_t mosi_trigger_NIBP_Data[11] = {0x14,0x14,0x14};
 	uint8_t mosi_first_call_for_data[1] = {0x14};
 
 	// ///////// This is the first part of the request  to the Height Sensor/////////////
@@ -128,7 +128,7 @@ int main(int argc, char **argv) {
 	//for (char ret = 0; ret < 12; ret++) {
 		//transfer here
 
-		bcm2835_spi_transfernb(miso_copy_NIBP_Data,mosi_trigger_NIBP_Data,11);
+		bcm2835_spi_transfernb(miso_copy_NIBP_Data,mosi_trigger_NIBP_Data,3);
 	//}
 
 
@@ -147,9 +147,11 @@ int main(int argc, char **argv) {
 		//	puts("");
 		//printf("%.2X ", rx[ret]);
 		
-	sprintf(miso_copy_NIBP_Data, "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d", miso_copy_NIBP_Data[0], miso_copy_NIBP_Data[1],miso_copy_NIBP_Data[2],miso_copy_NIBP_Data[3],miso_copy_NIBP_Data[4],miso_copy_NIBP_Data[5],miso_copy_NIBP_Data[5],miso_copy_NIBP_Data[6],miso_copy_NIBP_Data[7],miso_copy_NIBP_Data[8],miso_copy_NIBP_Data[9],miso_copy_NIBP_Data[10]);
+	sprintf(miso_copy_NIBP_Data, "%d,%d,%d", miso_copy_NIBP_Data[0], miso_copy_NIBP_Data[1],miso_copy_NIBP_Data[2]);
 	printf(miso_copy_NIBP_Data);
-	printf("Systolic Reading is = %d\n", (miso_copy_NIBP_Data[0]+ miso_copy_NIBP_Data[1]));
+	printf("Systolic Reading is: %d\n", miso_copy_NIBP_Data[0]);
+	printf("Diastolic Reading is: %d\n", miso_copy_NIBP_Data[1]);
+	printf("Pulse Reading is: %d\n", miso_copy_NIBP_Data[2]);
 	//}
 	}//END OF IF CHECKING FOR  miso_trigger_NIBP_Measurement[0] RESULT FOR 0X15
 	

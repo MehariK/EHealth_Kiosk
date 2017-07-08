@@ -256,7 +256,8 @@ receive_BP_measurement_data_from_BPM( unsigned char *dataReading, long buf_size/
             int HOUR = val[8];
             int MIN = val[9];
             int SECOND = val[10];
-            
+
+            char BP_READING_FINAL[3]={SYS, DIA, PUL};
             sprintf( out, "%d %d %d %d %d %d %d %d %d %d %d", val[0], val[1], val[2], val[3], val[4], val[5], val[6], val[7], val[8], val[9], val[10] );
            mySerial.println( out );
           //  sprintf( out, "SYS=%d DIA=%d PUL=%d YEAR=%d MONTH=%d DAY=%d HOUR=%d MINUTES=%d", SYS, DIA, PUL, YEAR, MONTH, DAY, HOUR, MIN );
@@ -284,7 +285,7 @@ receive_BP_measurement_data_from_BPM( unsigned char *dataReading, long buf_size/
                           mySerial.println( *(val+x));
                          }
        */                  
-    return val;
+    return BP_READING_FINAL;
 }
 
 
@@ -499,7 +500,7 @@ void loop() {
                           //sprintf( *(BP_DATA+x), "%d");
                           mySerial.println((int)*(BP_DATA+x));
                          }*/
-                            SPI.transfer(BP_DATA,11);
+                            SPI.transfer(BP_DATA,3);
                            
                          /*for(int j = 0; j<12; j++){
                              //spi_tranceiver((int)BP_DATA[j]);
