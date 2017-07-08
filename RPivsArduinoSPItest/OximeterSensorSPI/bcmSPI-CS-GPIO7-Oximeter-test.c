@@ -137,8 +137,8 @@ uint8_t miso_receive_ack_for_first_call_for_data[1] ;
 		//	puts("");
 		//printf("%.2X ", rx[ret]);
 		
-	sprintf(miso_copy_OXIMETER_Data, "%d,%d", miso_copy_OXIMETER_Data[0], miso_copy_OXIMETER_Data[1]);
-	printf(miso_copy_OXIMETER_Data);
+	//sprintf(miso_copy_OXIMETER_Data, "%d,%d", miso_copy_OXIMETER_Data[0], miso_copy_OXIMETER_Data[1]);
+	//printf(miso_copy_OXIMETER_Data);
 	printf("Blood Oxygen Level is: %d, and Pulse rate is: %d\n", miso_copy_OXIMETER_Data[0],miso_copy_OXIMETER_Data[1]));
 	//}
 	}//END OF IF CHECKING FOR  miso_trigger_OXIMETER_Measurement[0] RESULT FOR 0X15
