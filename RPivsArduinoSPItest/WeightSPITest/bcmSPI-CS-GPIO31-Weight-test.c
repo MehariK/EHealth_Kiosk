@@ -118,7 +118,7 @@ uint8_t miso_receive_ack_for_first_call_for_data[1] ;
 	bcm2835_delayMicroseconds(.777);
 
 
-		bcm2835_spi_transfernb(miso_copy_WEIGHT_Data,mosi_trigger_WEIGHT_Data,1);
+		bcm2835_spi_transfernb(mosi_trigger_WEIGHT_Data,miso_copy_WEIGHT_Data,1);
 	
 
 
