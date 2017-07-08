@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 // Chip select on GPIO pin  GPIO3 
-#define HEIGHT_CS  RPI_V2_GPIO_P1_37
+#define HEIGHT_CS  RPI_V2_GPIO_P1_33
 
 int main(int argc, char **argv) {
 	if (!bcm2835_init()) {
@@ -138,9 +138,9 @@ uint8_t miso_receive_ack_for_first_call_for_data[1];
 		//	puts("");
 		//printf("%.2X ", rx[ret]);
 		
-	sprintf(miso_copy_HEIGHT_Data, "%d", miso_copy_HEIGHT_Data[0]);
-	printf("Height Measurement is = %d\n", miso_copy_HEIGHT_Data);
-	//printf("Systolic Reading is = %d\n", (miso_copy_HEIGHT_Data[0]+ miso_copy_HEIGHT_Data[1]));
+	//sprintf(miso_copy_HEIGHT_Data, "%d", miso_copy_HEIGHT_Data[0]);
+	//printf("Height Measurement is = %d\n", miso_copy_HEIGHT_Data);
+	printf("Height measured is: %d\n", miso_copy_HEIGHT_Data[0]);
 	//}
 	}//END OF IF CHECKING FOR  miso_trigger_HEIGHT_Measurement[0] RESULT FOR 0X15
 	
