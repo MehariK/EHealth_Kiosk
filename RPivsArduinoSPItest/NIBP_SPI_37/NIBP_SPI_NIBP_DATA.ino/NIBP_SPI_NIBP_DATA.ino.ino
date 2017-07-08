@@ -247,21 +247,21 @@ receive_BP_measurement_data_from_BPM( unsigned char *dataReading, long buf_size/
             for( int i=0; i<11; i++ ) {
               val[i] = decodeTwoBytesHEX( out+(i*2) );
             }
-            int SYS = val[0]+val[1];
-            int DIA = val[1];
-            int PUL = val[2];
+            char SYS = val[0]+val[1];
+            char DIA = val[1];
+            char PUL = val[2];
             int YEAR = val[5]+1900;
-            int MONTH = val[6];
-            int DAY = val[7];
-            int HOUR = val[8];
-            int MIN = val[9];
-            int SECOND = val[10];
+            char MONTH = val[6];
+            char DAY = val[7];
+            char HOUR = val[8];
+            char MIN = val[9];
+            char SECOND = val[10];
 
             char BP_READING_FINAL[3]={SYS, DIA, PUL};
-            sprintf( out, "%d %d %d %d %d %d %d %d %d %d %d", val[0], val[1], val[2], val[3], val[4], val[5], val[6], val[7], val[8], val[9], val[10] );
-           mySerial.println( out );
-          //  sprintf( out, "SYS=%d DIA=%d PUL=%d YEAR=%d MONTH=%d DAY=%d HOUR=%d MINUTES=%d", SYS, DIA, PUL, YEAR, MONTH, DAY, HOUR, MIN );
-         // mySerial.println( out );
+           sprintf( out, "%d %d %d %d %d %d %d %d %d %d %d", val[0], val[1], val[2], val[3], val[4], val[5], val[6], val[7], val[8], val[9], val[10] );
+          mySerial.println( out );
+         sprintf( out, "SYS=%d DIA=%d PUL=%d YEAR=%d MONTH=%d DAY=%d HOUR=%d MINUTES=%d", SYS, DIA, PUL, YEAR, MONTH, DAY, HOUR, MIN );
+         mySerial.println( out );
 
      //end of test code
 /*

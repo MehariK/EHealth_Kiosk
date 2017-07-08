@@ -149,9 +149,9 @@ int main(int argc, char **argv) {
 		
 	sprintf(miso_copy_NIBP_Data, "%d,%d,%d", miso_copy_NIBP_Data[0],miso_copy_NIBP_Data[1],miso_copy_NIBP_Data[2]);
 	printf(miso_copy_NIBP_Data);
-	printf("Systolic Reading is: %d\n",(int)miso_copy_NIBP_Data[0]);
-	printf("Diastolic Reading is: %d\n",(int)miso_copy_NIBP_Data[1]);
-	printf("Pulse Reading is: %d\n", (int)miso_copy_NIBP_Data[2]);
+	printf("Systolic Reading is: %d\n",miso_copy_NIBP_Data[0]);
+	printf("Diastolic Reading is: %d\n",miso_copy_NIBP_Data[1]);
+	printf("Pulse Reading is: %d\n", miso_copy_NIBP_Data[2]);
 	//}
 	}//END OF IF CHECKING FOR  miso_trigger_NIBP_Measurement[0] RESULT FOR 0X15
 	
