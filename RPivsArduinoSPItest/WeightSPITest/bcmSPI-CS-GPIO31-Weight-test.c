@@ -109,7 +109,7 @@ uint8_t miso_receive_ack_for_first_call_for_data[1] ;
 
 	// this is the attempt to read the BP Measurement data
 	//bcm2835_delayMicroseconds(7000);
-	delay(7);
+	bcm2835_delay(1000);
 
 
 
