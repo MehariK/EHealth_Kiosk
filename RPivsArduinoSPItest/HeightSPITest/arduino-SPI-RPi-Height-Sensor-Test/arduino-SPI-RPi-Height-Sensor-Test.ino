@@ -20,7 +20,7 @@ volatile uint8_t distance;
 volatile uint8_t height;
 
 volatile uint8_t sumValueIN;
-volatile uint8_t valueIN[1]= {0};
+volatile uint8_t valueIN[1]= {0x0F};
 uint8_t junkValueOUT[1]= {0x01};
 volatile uint8_t valueOUT[1] = {0xAA};
 volatile uint8_t rpiThx[1]= {0x4};
@@ -161,7 +161,7 @@ void loop ()
                               unsigned long end_first = micros();
                               unsigned long delta_first = end_first - start;
                               Serial.println(delta_first); 
-                               *valueIN = 0xFF;  
+                               *valueIN = 0x0F;  
                       }
                       //request by RPi to transmit the data read from the Height Sensor
                       else if(valueIN[0]==0x14){
