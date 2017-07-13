@@ -36,12 +36,12 @@
 //The folowing variables are for SPI communication to RPi
 volatile uint8_t valueIN[1]= {0x0F};
 uint8_t junkValueOUT[1]= {0x01};
-volatile uint8_t valueOUT[1]= {0xAA};
+byte valueOUT[10]={0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06};
 volatile uint8_t rpiThx[1]= {0x4};
 //up to here
 
 //#define calibration_factor -26240.0 //This value is obtained using the SparkFun_HX711_Calibration sketch
-#define calibration_factor -12670.0 //This value is obtained using the SparkFun_HX711_Calibration sketch
+#define calibration_factor -1900.0 //This value is obtained using the SparkFun_HX711_Calibration sketch
 #define DOUT  3
 #define CLK  2
 
@@ -52,18 +52,19 @@ volatile uint8_t rpiThx[1]= {0x4};
 
 int numberOfDataCollected = 0;
 int countSmoothDataCollected = 0;
-int maxDataCollected = 50;
-int maxSmoothedDataCollected = 25;
+int maxDataCollected = 10;
+int maxSmoothedDataCollected = 5;
 
-uint8_t weightMeasured[50];
- int measuredAverageWeight;
+
+float weightMeasured[10];
+ float measuredAverageWeight;
 //smoothed average height array
-uint8_t smoothedAverageWeight[25];
+float smoothedAverageWeight[5];
 
 //smoothed median height array
-uint8_t smoothedMedianWeight[25];
+float smoothedMedianWeight[5];
 
-volatile uint8_t weight = 0;
+volatile float weight = 0;
 
 HX711 scale(DOUT, CLK);
 
@@ -103,13 +104,13 @@ void loop() {
         SPI.transfer(valueIN,1);
          Serial.println("valueIN[0]");
          Serial.println(valueIN[0]);
-         Serial.println((int) scale.get_units());
+         
 
          unsigned long start = micros();
   //  }
 
    /*
-  Serial.print(scale.get_units(), 1); //scale.get_units() returns a uint8_t
+  Serial.print(scale.get_units(), 1); //scale.get_units() returns a float
   Serial.print(" kg"); //You can change this to kg but you'll need to refactor the calibration_factor
   Serial.println();
   */
@@ -122,11 +123,15 @@ void loop() {
                                       for (int countDataCollected = 0; countDataCollected < maxDataCollected; countDataCollected++)
                                       {
                                        
-                                        weightMeasured[countDataCollected] = (uint8_t) scale.get_units();
+                                        weightMeasured[countDataCollected] = scale.get_units();
                                                numberOfDataCollected =  countDataCollected;
                                                    ++numberOfDataCollected;                        
                                       }
 
+
+                                        for (int countDataCollected = 0; countDataCollected < maxDataCollected; countDataCollected++){
+                                          Serial.println( weightMeasured[countDataCollected]);
+                                        }
 
 
                                       ///////////////////////////////////////////////////////////
@@ -134,8 +139,8 @@ void loop() {
                                                    if(numberOfDataCollected == maxDataCollected)
                                                         {
                                                         measuredAverageWeight = GetAverage(weightMeasured, maxDataCollected);
-                                                       // uint8_t nearRealMedianWeight =  GetMedian(weightMeasured, maxDataCollected);
-                                                        //uint8_t  calculatedAverageWeight = 210.00 - measuredAverageWeight;
+                                                       // float nearRealMedianWeight =  GetMedian(weightMeasured, maxDataCollected);
+                                                        //float  calculatedAverageWeight = 210.00 - measuredAverageWeight;
                                                          
                                                          
                                                          //Serial.println(measuredAverageHeight); 
@@ -156,13 +161,23 @@ void loop() {
 
 
                                      /////////////////////////////////////////////////////////////////////
-                              valueOUT[0] = measuredAverageWeight;           
+                             // valueOUT[0] = measuredAverageWeight * 100;  
+                             int valueToSend = 68.84 * 100; 
+                           //  valueOUT[0] = 0x48;  
+                                   // valueOUT = 'ABCDEF\n';
+
+                           sprintf(valueOUT, "%X", valueToSend); 
+                           //valueOUT[4] = '\0';
+
+                                //Serial.println(valueOUT);
+                            
+                                   
                         Serial.println("Finished measuring weight");
                         Serial.println(valueOUT[0]);
                         Serial.println((int)valueOUT[0]);
                        // distance = readHeightSensor();
                         
-                        Serial.println("to read data from bathroom scale took this minutes:");
+                        Serial.println("to read data from bathroom scale took this # milliseconds:");
                               unsigned long end_first = micros();
                               unsigned long delta_first = end_first - start;
                               Serial.println(delta_first);     
@@ -171,18 +186,18 @@ void loop() {
                       //request by RPi to transmit the data read from the Height Sensor
                       else if(valueIN[0]==0x14){ 
 
-                        Serial.println("to export weight measurement data takes this # minutes:");
+                        Serial.println("to export weight measurement data takes this # milliseconds:");
                               unsigned long end = micros();
                               unsigned long delta = end - start;
                               Serial.println(delta);
 
-                              SPI.transfer((char)valueOUT,1);
+                              SPI.transfer(valueOUT,10);
                               
                            //SPDR = height;
                           // *junkValueOUT = 0xFA;
                            //sendSensorReadingToRaspiCommand(valueOUT);
                           // spi_tranceiver(junkValueOUT);
-                           //readRequestRaspiCommand(rpiThx, valueOUT);
+                           //readRequestRaspiCommand(rpiT[hx, valueOUT);
                             //Send recorded height measurement back to RasPi
                              Serial.println("Transmitted data");
                       }else{
@@ -193,7 +208,10 @@ void loop() {
                      // int x = readHeightSensor();
                       //Serial.print("weight");
                       //Serial.println(weight);
-    
+                //reset numberOfDataCollected
+                numberOfDataCollected = 0;
+            Serial.println("Value In Resetted to");
+              Serial.println(valueIN[0]);    
            //Just exited loop    
         Serial.println("XXXXXXXXXXXXXXited the loop");         
            
@@ -225,7 +243,7 @@ void spi_init_slave ()
 
 //Function to send and receive data for both master and slave
 //unsigned char spi_tranceiver (unsigned char data)
-uint8_t spi_tranceiver (uint8_t * valueOUT)
+float spi_tranceiver (float * valueOUT)
 {
    // set MISO HIGH
     //DDRB |= _BV(PB4);
@@ -242,7 +260,7 @@ uint8_t spi_tranceiver (uint8_t * valueOUT)
     return(SPDR);  
 }
 
-uint8_t spi_tranceiver_junk_send ()
+float spi_tranceiver_junk_send ()
 {
    // set MISO HIGH
     //DDRB |= _BV(PB4);
@@ -260,9 +278,9 @@ uint8_t spi_tranceiver_junk_send ()
 }
 
 
-uint8_t GetMedian(uint8_t daArray[], int iSize) {
+float GetMedian(float daArray[], int iSize) {
   // Allocate an array of the same size and sort it.
-  uint8_t* dpSorted = new uint8_t[iSize];
+  float* dpSorted = new float[iSize];
   //    int arraySize = daArray.length();
   for (int i = 0; i < iSize; ++i) {
     dpSorted[i] = daArray[i];
@@ -270,7 +288,7 @@ uint8_t GetMedian(uint8_t daArray[], int iSize) {
   for (int i = iSize - 1; i > 0; --i) {
     for (int j = 0; j < i; ++j) {
       if (dpSorted[j] > dpSorted[j + 1]) {
-        uint8_t dTemp = dpSorted[j];
+        float dTemp = dpSorted[j];
         dpSorted[j] = dpSorted[j + 1];
         dpSorted[j + 1] = dTemp;
       }
@@ -278,7 +296,7 @@ uint8_t GetMedian(uint8_t daArray[], int iSize) {
   }
 
   // Middle or average of middle values in the sorted array.
-  uint8_t dMedian = 0.0;
+  float dMedian = 0.0;
   if ((iSize % 2) == 0) {
     dMedian = (dpSorted[iSize / 2] + dpSorted[(iSize / 2) - 1]) / 2.0;
   } else {
@@ -288,14 +306,14 @@ uint8_t GetMedian(uint8_t daArray[], int iSize) {
   return dMedian;
 }
 
-uint8_t GetAverage(uint8_t *daArray, int iSize)
+float GetAverage(float *daArray, int iSize)
 {
-  uint8_t sum = 0.0;
+  float sum = 0.0;
   for (int i = 0; i < iSize; ++i)
   {
     sum =  daArray[i] + sum;
   }
-  uint8_t average = sum / (iSize - 1);
+  float average = sum / (iSize - 1);
   return average;
 }
     
@@ -312,8 +330,8 @@ long read() {
   }
 
   unsigned long value = 0;
-  uint8_t data[3] = { 0 };
-  uint8_t filler = 0x00;
+  float data[3] = { 0 };
+  float filler = 0x00;
 
   // pulse the clock pin 24 times to read the data
   data[2] = shiftIn(DOUT, CLK, MSBFIRST);
@@ -355,7 +373,7 @@ double get_value(byte times) {
   return read_average(times) - 0;
 }
 
-uint8_t HX711::get_units(byte times) {
+float HX711::get_units(byte times) {
   return get_value(times) / SCALE;
 }
 */

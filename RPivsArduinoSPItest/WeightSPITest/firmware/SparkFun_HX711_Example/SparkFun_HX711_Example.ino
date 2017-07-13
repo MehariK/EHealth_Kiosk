@@ -27,7 +27,7 @@
 // the last and best -6910
 //#define calibration_factor -26240.0 //This value is obtained using the SparkFun_HX711_Calibration sketch
 //The one below is from second calibration on Statruday May 20, 2017
-#define calibration_factor -12670.00 //This value is obtained using the SparkFun_HX711_Calibration sketch
+#define calibration_factor -1900.00 //This value is obtained using the SparkFun_HX711_Calibration sketch
 
 #define DOUT  3
 #define CLK  2
