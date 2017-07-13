@@ -27,7 +27,10 @@ int main(int argc, char **argv) {
 	uint8_t miso_trigger_WEIGHT_Measurement[1] = {0x0};
 	
 	uint8_t miso_copy_WEIGHT_Data[10];
+	uint8_t miso_copy_WEIGHT_Data_calc[10];
 	uint8_t mosi_trigger_WEIGHT_Data[10] = {0x14,0x14,0x14,0x14,0x14,0x14,0x14,0x14,0x14,0x14};
+
+	char hexRef[16]={'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
 	
 uint8_t mosi_first_call_for_data[1] = {0x14};
 uint8_t miso_receive_ack_for_first_call_for_data[1] ;
@@ -139,6 +142,16 @@ uint8_t miso_receive_ack_for_first_call_for_data[1] ;
 		
 	//sprintf(miso_copy_WEIGHT_Data, "%d", (miso_copy_WEIGHT_Data[0],miso_copy_WEIGHT_Data[1],miso_copy_WEIGHT_Data[2],miso_copy_WEIGHT_Data[3],miso_copy_WEIGHT_Data[4],miso_copy_WEIGHT_Data[5],miso_copy_WEIGHT_Data[6],miso_copy_WEIGHT_Data[7],miso_copy_WEIGHT_Data[8],miso_copy_WEIGHT_Data[9]));
 	//printf("Weight Measurement is: = %d,%d,%d,%d,%d,%d,%d,%d,%d,%d\n",miso_copy_WEIGHT_Data);
+
+	sprintf(miso_copy_WEIGHT_Data_calc, "%c", miso_copy_WEIGHT_Data); 
+
+
+	
+
+printf("Weight measured is %.2f", (find_Index(hexRef,16,miso_copy_WEIGHT_Data_calc[0])*(16^3)+find_Index(hexRef,16,miso_copy_WEIGHT_Data_calc[1]*(16^2)+find_Index(hexRef,16,miso_copy_WEIGHT_Data_calc[2]*(16^1)+find_Index(hexRef,16,miso_copy_WEIGHT_Data_calc[1]*(16^0))/100);
+
+
+
 	for (int z = 0; z< 10; z++){
 	printf("Weight measured is:%d\n", (miso_copy_WEIGHT_Data[z]));
 	}
@@ -148,4 +161,15 @@ uint8_t miso_receive_ack_for_first_call_for_data[1] ;
 	bcm2835_spi_end();
 	bcm2835_close();	
 	return 0;
+}
+
+
+int FindIndex( char a[], int size, int value )
+{
+    size_t index = 0;
+
+    while ( index < size && a[index] != value ) ++index;
+
+    return ( index == size ? -1 : index );
+
 }
