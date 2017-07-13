@@ -37,6 +37,7 @@
 volatile uint8_t valueIN[1]= {0x0F};
 uint8_t junkValueOUT[1]= {0x01};
 byte valueOUT[10]={0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06};
+byte valueToTx[10]={0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06};
 volatile uint8_t rpiThx[1]= {0x4};
 //up to here
 
@@ -161,15 +162,22 @@ void loop() {
 
 
                                      /////////////////////////////////////////////////////////////////////
-                             // valueOUT[0] = measuredAverageWeight * 100;  
-                             int valueToSend = 68.84 * 100; 
+                                   //  if (measuredAverageWeight > 0.00){
+                                          int measuredAverageWeight_to_send = measuredAverageWeight * 100; 
+                                         // int measuredAverageWeight_to_send = 68.84 * 100; 
+                                          sprintf(valueOUT, "%X", measuredAverageWeight_to_send); 
+                                    // }
+                                     //else{
+                                    //   valueOUT[0] = 0; 
+                                    // }
+                            // int valueToSend = 68.84 * 100; 
                            //  valueOUT[0] = 0x48;  
                                    // valueOUT = 'ABCDEF\n';
 
-                           sprintf(valueOUT, "%X", valueToSend); 
+                           //sprintf(valueToTx, "%X", valueOUT); 
                            //valueOUT[4] = '\0';
 
-                                //Serial.println(valueOUT);
+                               //Serial.println(valueOUT);
                             
                                    
                         Serial.println("Finished measuring weight");
