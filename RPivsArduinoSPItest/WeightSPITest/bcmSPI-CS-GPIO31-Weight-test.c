@@ -26,8 +26,8 @@ int main(int argc, char **argv) {
 	uint8_t mosi_Start_Read_WEIGHT_Measurement_Process[1] = {0x0A};
 	uint8_t miso_trigger_WEIGHT_Measurement[1] = {0x0};
 	
-	uint8_t miso_copy_WEIGHT_Data[1];
-	uint8_t mosi_trigger_WEIGHT_Data[1] = {0x14};
+	uint8_t miso_copy_WEIGHT_Data[10];
+	uint8_t mosi_trigger_WEIGHT_Data[10] = {0x14,0x14,0x14,0x14,0x14,0x14,0x14,0x14,0x14,0x14};
 	
 uint8_t mosi_first_call_for_data[1] = {0x14};
 uint8_t miso_receive_ack_for_first_call_for_data[1] ;
@@ -51,7 +51,7 @@ uint8_t miso_receive_ack_for_first_call_for_data[1] ;
 
 	//for (char ret = 0; ret < 12; ret++) {
 		//transfer here
-		miso_trigger_WEIGHT_Measurement[0] = bcm2835_spi_transfer(mosi_Start_Read_WEIGHT_Measurement_Process[0]);
+	miso_trigger_WEIGHT_Measurement[0] = bcm2835_spi_transfer(mosi_Start_Read_WEIGHT_Measurement_Process[0]);
 	//}
 
 
@@ -73,14 +73,14 @@ uint8_t miso_receive_ack_for_first_call_for_data[1] ;
 	////////////////////////////////////////////////////////////////////////////////////
 
 	//bcm2835_delayMicroseconds(3000);
-	//printf("Arduino sent the following ack for the trigger: "); 
-	//printf("%d",miso_trigger_WEIGHT_Measurement[0]);
-	//printf("\n");
-
+	printf("Arduino sent the following ack for the trigger: "); 
+	printf("%d",miso_trigger_WEIGHT_Measurement[0]);
+	printf("\n");
+	
 	if((int)miso_trigger_WEIGHT_Measurement[0]==0x0F){
 
 // this is for the blood pressure meter or any other sensor to give time for the measurement to complete
-	delay(7);
+	delay(5000);
 
 	//for(int i=0; i< 20000; i++){}
 
@@ -109,7 +109,7 @@ uint8_t miso_receive_ack_for_first_call_for_data[1] ;
 
 	// this is the attempt to read the BP Measurement data
 	//bcm2835_delayMicroseconds(7000);
-	bcm2835_delay(1000);
+	delay(12000);
 
 
 
@@ -118,7 +118,7 @@ uint8_t miso_receive_ack_for_first_call_for_data[1] ;
 	bcm2835_delayMicroseconds(.777);
 
 
-		bcm2835_spi_transfernb(mosi_trigger_WEIGHT_Data,miso_copy_WEIGHT_Data,1);
+	bcm2835_spi_transfernb(mosi_trigger_WEIGHT_Data,miso_copy_WEIGHT_Data,10);
 	
 
 
@@ -127,7 +127,7 @@ uint8_t miso_receive_ack_for_first_call_for_data[1] ;
 	//the CS line will be de-asserted no earlier than 1 core clock cycle 
 	//after the trailing edge of teh final clock pulse
 
-	bcm2835_delayMicroseconds(.244);
+	bcm2835_delayMicroseconds(.444);
 
 	bcm2835_gpio_write(WEIGHT_CS,HIGH);
 
@@ -137,9 +137,11 @@ uint8_t miso_receive_ack_for_first_call_for_data[1] ;
 		//	puts("");
 		//printf("%.2X ", rx[ret]);
 		
-	//sprintf(miso_copy_WEIGHT_Data, "%d", miso_copy_WEIGHT_Data[0]);
-	//printf("Weight Measurement is: = %d\n",miso_copy_WEIGHT_Data);
-	printf("Weight Measurement is:  %d\n", (miso_copy_WEIGHT_Data[0]));
+	//sprintf(miso_copy_WEIGHT_Data, "%d", (miso_copy_WEIGHT_Data[0],miso_copy_WEIGHT_Data[1],miso_copy_WEIGHT_Data[2],miso_copy_WEIGHT_Data[3],miso_copy_WEIGHT_Data[4],miso_copy_WEIGHT_Data[5],miso_copy_WEIGHT_Data[6],miso_copy_WEIGHT_Data[7],miso_copy_WEIGHT_Data[8],miso_copy_WEIGHT_Data[9]));
+	//printf("Weight Measurement is: = %d,%d,%d,%d,%d,%d,%d,%d,%d,%d\n",miso_copy_WEIGHT_Data);
+	for (int z = 0; z< 10; z++){
+	printf("Weight measured is:%d\n", (miso_copy_WEIGHT_Data[z]));
+	}
 	//}
 	}//END OF IF CHECKING FOR  miso_trigger_WEIGHT_Measurement[0] RESULT FOR 0X15
 	
