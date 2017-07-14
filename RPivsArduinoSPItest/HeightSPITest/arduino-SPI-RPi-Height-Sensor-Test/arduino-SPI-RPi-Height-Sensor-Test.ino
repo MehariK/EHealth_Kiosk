@@ -22,17 +22,22 @@ volatile uint8_t height;
 volatile uint8_t sumValueIN;
 volatile uint8_t valueIN[1]= {0x0F};
 uint8_t junkValueOUT[1]= {0x01};
-volatile uint8_t valueOUT[1] = {0xAA};
+//volatile uint8_t valueOUT[1] = {0xAA};
 volatile uint8_t rpiThx[1]= {0x4};
+byte valueOUT[10]={0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06};
+byte valueToTx[10]={0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06};
+
+
 
 
 //for height measurement
 
-int countDataCollected = 0;
+int numberOfDataCollected = 0;
 int countSmoothDataCollected = 0;
 int maxDataCollected = 100;
 int maxSmoothedDataCollected = 25;
-int calculatedAverageHeight;
+
+float calculatedAverageHeight;
 float heightMeasured[100];
 
 //smoothed average height array
@@ -57,7 +62,7 @@ void setup (void)
   //Set the clock to communicate with RPi at 4MHz
  //SPI.setClockDivider(SPI_CLOCK_DIV4);
 
- spi_init_slave();
+    spi_init_slave();
 
    pinMode(TRIGPIN, OUTPUT); // Sets the trigPin as an Output
    pinMode(ECHOPIN, INPUT); // Sets the echoPin as an Input
@@ -113,22 +118,27 @@ void loop ()
                       if(valueIN[0]==0x0A){
 
 
-                         for (int countDataCollected; countDataCollected < maxDataCollected; countDataCollected++)
+                         for (int countDataCollected = 0; countDataCollected < maxDataCollected; countDataCollected++)
                                       {
                                         
                                         heightMeasured[countDataCollected] = readHeightSensor();
+                                               numberOfDataCollected =  countDataCollected;
+                                                   ++numberOfDataCollected;   
                                                                   
                                       }
 
+                                       for (int countDataCollected = 0; countDataCollected < maxDataCollected; countDataCollected++){
+                                          Serial.println( heightMeasured[countDataCollected]);
+                                        }
 
 
                                       ///////////////////////////////////////////////////////////
 
-                                                   if(countDataCollected == maxDataCollected)
+                                                   if(numberOfDataCollected == maxDataCollected)
                                                         {
                                                         float measuredAverageHeight = GetAverage(heightMeasured, maxDataCollected);
-                                                        float nearRealMedianHeight =  GetMedian(heightMeasured, maxDataCollected);
-                                                        calculatedAverageHeight = 210.00 - measuredAverageHeight;
+                                                       // float nearRealMedianHeight =  GetMedian(heightMeasured, maxDataCollected);
+                                                       // calculatedAverageHeight = 210.00 - measuredAverageHeight;
                                                          
                                                          
                                                          //Serial.println(measuredAverageHeight); 
@@ -149,12 +159,27 @@ void loop ()
 
 
                                      /////////////////////////////////////////////////////////////////////
-                         
-                         valueOUT[0] = calculatedAverageHeight;
-                         // spi_tranceiver(valueOUT);
-                      //SPDR = readHeightSensor();
-                      // SPDR = readHeightSensor();
-                       // 
+                                     
+                         //  if (measuredAverageWeight > 0.00){ 
+                        
+                            int measuredAverageWeight_to_send = calculatedAverageHeight * 100; 
+                             
+                              sprintf(valueOUT, "%X", measuredAverageWeight_to_send); 
+
+          
+                           
+                                    // }
+                                     //else{
+                                    //   valueOUT[0] = 0; 
+                                    // }
+                            // int valueToSend = 68.84 * 100; 
+
+                           //sprintf(valueOUT, "%X", valueToSend); 
+                           //valueOUT[4] = '\0';
+
+                           //Serial.println(valueOUT);
+                      
+                       
                         Serial.println("Just finished reading height from the bathroom scale");
 
                         Serial.println("to read data from height measurement sensor took  # this minutes:");
@@ -165,7 +190,7 @@ void loop ()
                       }
                       //request by RPi to transmit the data read from the Height Sensor
                       else if(valueIN[0]==0x14){
-                           Serial.println("to export data after delay of this minutes:");
+                           Serial.println("to export data after delay of this # minutes:");
                               unsigned long end = micros();
                               unsigned long delta = end - start;
                               Serial.println(delta);
@@ -181,7 +206,9 @@ void loop ()
                       //*valueIN = 0xFF;
 
                       //Just exited loop    
-        Serial.println("XXXXXXXXXXXXXXited the loop");    
+        Serial.println("XXXXXXXXXXXXXXited the loop");  
+
+        numberOfDataCollected = 0; 
                      
 }  // end of loop
 
