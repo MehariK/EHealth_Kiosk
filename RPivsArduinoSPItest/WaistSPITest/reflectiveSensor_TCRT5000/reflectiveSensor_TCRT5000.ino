@@ -1,14 +1,12 @@
-int digitalInputPin = 4;
+int digitalInputPin = 8;
 int count = 0;
 
 void setup() {
   // put your setup code here, to run once:
 
-
-
 pinMode(digitalInputPin, INPUT);
-digitalWrite(digitalInputPin, HIGH);
-Serial.begin(9600);
+digitalWrite(digitalInputPin, LOW);
+Serial.begin(57600);
 }
 
 void loop() {

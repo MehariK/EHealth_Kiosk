@@ -2,11 +2,11 @@
 int count1=1;
 int flg=0;
 int tcrt;
-int digSignalRead = 13;
+int digSignalRead = 9;
 void setup(){
 pinMode(digSignalRead, INPUT);
 digitalWrite(digSignalRead, HIGH);
-Serial.begin(9600);
+Serial.begin(57600);
 }
 void loop(){
 //tcrt = analogRead(A0);
